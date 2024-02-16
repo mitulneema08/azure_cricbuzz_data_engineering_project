@@ -1,0 +1,9 @@
+{
+	"name": "cricbuzz-cricket-df",
+	"location": "eastus",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "5ad1aec7-362c-4ae1-bb1a-290f225a5902",
+		"tenantId": "c86e409a-5bf7-4878-a52b-1f82ee840922"
+	}
+}

@@ -1,0 +1,19 @@
+{
+	"name": "T20AllroundersRankings",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "T20AllroundersRankingsHTTP",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Json",
+		"typeProperties": {
+			"location": {
+				"type": "HttpServerLocation",
+				"relativeUrl": "/stats/v1/rankings/allrounders?formatType=t20"
+			}
+		},
+		"schema": {}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

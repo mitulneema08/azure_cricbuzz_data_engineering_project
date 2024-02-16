@@ -1,0 +1,74 @@
+{
+	"name": "TestAllroundersRankingsSink",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureDataLakeStorage2",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Json",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "TestAllroundersRankings.json",
+				"folderPath": "cricbuzz-raw-data",
+				"fileSystem": "cricbuzz-cricket-container"
+			}
+		},
+		"schema": {
+			"type": "object",
+			"properties": {
+				"rank": {
+					"type": "array",
+					"items": {
+						"type": "object",
+						"properties": {
+							"id": {
+								"type": "string"
+							},
+							"rank": {
+								"type": "string"
+							},
+							"name": {
+								"type": "string"
+							},
+							"country": {
+								"type": "string"
+							},
+							"rating": {
+								"type": "string"
+							},
+							"points": {
+								"type": "string"
+							},
+							"lastUpdatedOn": {
+								"type": "string"
+							},
+							"trend": {
+								"type": "string"
+							},
+							"faceImageId": {
+								"type": "string"
+							},
+							"countryId": {
+								"type": "string"
+							}
+						}
+					}
+				},
+				"appIndex": {
+					"type": "object",
+					"properties": {
+						"seoTitle": {
+							"type": "string"
+						},
+						"webURL": {
+							"type": "string"
+						}
+					}
+				}
+			}
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

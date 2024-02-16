@@ -1,0 +1,19 @@
+{
+	"name": "T20TeamsRankingsHTTP",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "T20TeamsRankingsHTTP",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Json",
+		"typeProperties": {
+			"location": {
+				"type": "HttpServerLocation",
+				"relativeUrl": "/stats/v1/rankings/teams?formatType=t20"
+			}
+		},
+		"schema": {}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

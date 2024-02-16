@@ -1,0 +1,24 @@
+{
+	"name": "BattingStatsHTTP",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "BatsmanStatsRestHTTP",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"playerID": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "RestResource",
+		"typeProperties": {
+			"relativeUrl": {
+				"value": "@dataset().playerID",
+				"type": "Expression"
+			}
+		},
+		"schema": []
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

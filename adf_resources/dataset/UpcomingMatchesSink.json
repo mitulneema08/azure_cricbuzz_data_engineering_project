@@ -1,0 +1,189 @@
+{
+	"name": "UpcomingMatchesSink",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureDataLakeStorage2",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Json",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "rawupcomingmatches.json",
+				"folderPath": "cricbuzz-raw-data",
+				"fileSystem": "cricbuzz-cricket-container"
+			}
+		},
+		"schema": {
+			"type": "object",
+			"properties": {
+				"typeMatches": {
+					"type": "array",
+					"items": {
+						"type": "object",
+						"properties": {
+							"matchType": {
+								"type": "string"
+							},
+							"seriesMatches": {
+								"type": "array",
+								"items": {
+									"type": "object",
+									"properties": {
+										"seriesAdWrapper": {
+											"type": "object",
+											"properties": {
+												"seriesId": {
+													"type": "integer"
+												},
+												"seriesName": {
+													"type": "string"
+												},
+												"matches": {
+													"type": "array",
+													"items": {
+														"type": "object",
+														"properties": {
+															"matchInfo": {
+																"type": "object",
+																"properties": {
+																	"matchId": {
+																		"type": "integer"
+																	},
+																	"seriesId": {
+																		"type": "integer"
+																	},
+																	"seriesName": {
+																		"type": "string"
+																	},
+																	"matchDesc": {
+																		"type": "string"
+																	},
+																	"matchFormat": {
+																		"type": "string"
+																	},
+																	"startDate": {
+																		"type": "string"
+																	},
+																	"endDate": {
+																		"type": "string"
+																	},
+																	"state": {
+																		"type": "string"
+																	},
+																	"status": {
+																		"type": "string"
+																	},
+																	"team1": {
+																		"type": "object",
+																		"properties": {
+																			"teamId": {
+																				"type": "integer"
+																			},
+																			"teamName": {
+																				"type": "string"
+																			},
+																			"teamSName": {
+																				"type": "string"
+																			},
+																			"imageId": {
+																				"type": "integer"
+																			}
+																		}
+																	},
+																	"team2": {
+																		"type": "object",
+																		"properties": {
+																			"teamId": {
+																				"type": "integer"
+																			},
+																			"teamName": {
+																				"type": "string"
+																			},
+																			"teamSName": {
+																				"type": "string"
+																			},
+																			"imageId": {
+																				"type": "integer"
+																			}
+																		}
+																	},
+																	"venueInfo": {
+																		"type": "object",
+																		"properties": {
+																			"id": {
+																				"type": "integer"
+																			},
+																			"ground": {
+																				"type": "string"
+																			},
+																			"city": {
+																				"type": "string"
+																			},
+																			"timezone": {
+																				"type": "string"
+																			},
+																			"latitude": {
+																				"type": "string"
+																			},
+																			"longitude": {
+																				"type": "string"
+																			}
+																		}
+																	},
+																	"seriesStartDt": {
+																		"type": "string"
+																	},
+																	"seriesEndDt": {
+																		"type": "string"
+																	},
+																	"isTimeAnnounced": {
+																		"type": "boolean"
+																	},
+																	"stateTitle": {
+																		"type": "string"
+																	}
+																}
+															}
+														}
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"filters": {
+					"type": "object",
+					"properties": {
+						"matchType": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						}
+					}
+				},
+				"appIndex": {
+					"type": "object",
+					"properties": {
+						"seoTitle": {
+							"type": "string"
+						},
+						"webURL": {
+							"type": "string"
+						}
+					}
+				},
+				"responseLastUpdated": {
+					"type": "string"
+				}
+			}
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

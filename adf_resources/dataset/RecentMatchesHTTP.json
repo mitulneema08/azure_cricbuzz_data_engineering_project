@@ -1,0 +1,273 @@
+{
+	"name": "RecentMatchesHTTP",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "RecentMatchesHTTP",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Json",
+		"typeProperties": {
+			"location": {
+				"type": "HttpServerLocation",
+				"relativeUrl": "/matches/v1/recent"
+			}
+		},
+		"schema": {
+			"type": "object",
+			"properties": {
+				"typeMatches": {
+					"type": "array",
+					"items": {
+						"type": "object",
+						"properties": {
+							"matchType": {
+								"type": "string"
+							},
+							"seriesMatches": {
+								"type": "array",
+								"items": {
+									"type": "object",
+									"properties": {
+										"seriesAdWrapper": {
+											"type": "object",
+											"properties": {
+												"seriesId": {
+													"type": "integer"
+												},
+												"seriesName": {
+													"type": "string"
+												},
+												"matches": {
+													"type": "array",
+													"items": {
+														"type": "object",
+														"properties": {
+															"matchInfo": {
+																"type": "object",
+																"properties": {
+																	"matchId": {
+																		"type": "integer"
+																	},
+																	"seriesId": {
+																		"type": "integer"
+																	},
+																	"seriesName": {
+																		"type": "string"
+																	},
+																	"matchDesc": {
+																		"type": "string"
+																	},
+																	"matchFormat": {
+																		"type": "string"
+																	},
+																	"startDate": {
+																		"type": "string"
+																	},
+																	"endDate": {
+																		"type": "string"
+																	},
+																	"state": {
+																		"type": "string"
+																	},
+																	"status": {
+																		"type": "string"
+																	},
+																	"team1": {
+																		"type": "object",
+																		"properties": {
+																			"teamId": {
+																				"type": "integer"
+																			},
+																			"teamName": {
+																				"type": "string"
+																			},
+																			"teamSName": {
+																				"type": "string"
+																			},
+																			"imageId": {
+																				"type": "integer"
+																			}
+																		}
+																	},
+																	"team2": {
+																		"type": "object",
+																		"properties": {
+																			"teamId": {
+																				"type": "integer"
+																			},
+																			"teamName": {
+																				"type": "string"
+																			},
+																			"teamSName": {
+																				"type": "string"
+																			},
+																			"imageId": {
+																				"type": "integer"
+																			}
+																		}
+																	},
+																	"venueInfo": {
+																		"type": "object",
+																		"properties": {
+																			"id": {
+																				"type": "integer"
+																			},
+																			"ground": {
+																				"type": "string"
+																			},
+																			"city": {
+																				"type": "string"
+																			},
+																			"timezone": {
+																				"type": "string"
+																			},
+																			"latitude": {
+																				"type": "string"
+																			},
+																			"longitude": {
+																				"type": "string"
+																			}
+																		}
+																	},
+																	"currBatTeamId": {
+																		"type": "integer"
+																	},
+																	"seriesStartDt": {
+																		"type": "string"
+																	},
+																	"seriesEndDt": {
+																		"type": "string"
+																	},
+																	"isTimeAnnounced": {
+																		"type": "boolean"
+																	},
+																	"stateTitle": {
+																		"type": "string"
+																	}
+																}
+															},
+															"matchScore": {
+																"type": "object",
+																"properties": {
+																	"team1Score": {
+																		"type": "object",
+																		"properties": {
+																			"inngs1": {
+																				"type": "object",
+																				"properties": {
+																					"inningsId": {
+																						"type": "integer"
+																					},
+																					"runs": {
+																						"type": "integer"
+																					},
+																					"wickets": {
+																						"type": "integer"
+																					},
+																					"overs": {
+																						"type": "number"
+																					}
+																				}
+																			},
+																			"inngs2": {
+																				"type": "object",
+																				"properties": {
+																					"inningsId": {
+																						"type": "integer"
+																					},
+																					"runs": {
+																						"type": "integer"
+																					},
+																					"wickets": {
+																						"type": "integer"
+																					},
+																					"overs": {
+																						"type": "number"
+																					}
+																				}
+																			}
+																		}
+																	},
+																	"team2Score": {
+																		"type": "object",
+																		"properties": {
+																			"inngs1": {
+																				"type": "object",
+																				"properties": {
+																					"inningsId": {
+																						"type": "integer"
+																					},
+																					"runs": {
+																						"type": "integer"
+																					},
+																					"wickets": {
+																						"type": "integer"
+																					},
+																					"overs": {
+																						"type": "number"
+																					}
+																				}
+																			},
+																			"inngs2": {
+																				"type": "object",
+																				"properties": {
+																					"inningsId": {
+																						"type": "integer"
+																					},
+																					"runs": {
+																						"type": "integer"
+																					},
+																					"wickets": {
+																						"type": "integer"
+																					},
+																					"overs": {
+																						"type": "number"
+																					}
+																				}
+																			}
+																		}
+																	}
+																}
+															}
+														}
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"filters": {
+					"type": "object",
+					"properties": {
+						"matchType": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						}
+					}
+				},
+				"appIndex": {
+					"type": "object",
+					"properties": {
+						"seoTitle": {
+							"type": "string"
+						},
+						"webURL": {
+							"type": "string"
+						}
+					}
+				},
+				"responseLastUpdated": {
+					"type": "string"
+				}
+			}
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

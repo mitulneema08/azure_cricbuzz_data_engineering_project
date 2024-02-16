@@ -1,0 +1,24 @@
+{
+	"name": "matches_details_transformation_trigger",
+	"properties": {
+		"annotations": [],
+		"runtimeState": "Started",
+		"pipelines": [
+			{
+				"pipelineReference": {
+					"referenceName": "matches_details_transformation",
+					"type": "PipelineReference"
+				}
+			}
+		],
+		"type": "ScheduleTrigger",
+		"typeProperties": {
+			"recurrence": {
+				"frequency": "Hour",
+				"interval": 2,
+				"startTime": "2024-02-15T10:00:00",
+				"timeZone": "Eastern Standard Time"
+			}
+		}
+	}
+}

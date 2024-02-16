@@ -1,0 +1,19 @@
+{
+	"name": "ODIBatsmanRankingsHTTP",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ODIRankingsHTTP",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Json",
+		"typeProperties": {
+			"location": {
+				"type": "HttpServerLocation",
+				"relativeUrl": "/stats/v1/rankings/batsmen?formatType=odi"
+			}
+		},
+		"schema": {}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

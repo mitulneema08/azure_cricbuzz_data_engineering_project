@@ -1,0 +1,75 @@
+{
+	"name": "TestBowlingRankingsHTTP",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "HttpServer1",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Json",
+		"typeProperties": {
+			"location": {
+				"type": "HttpServerLocation",
+				"relativeUrl": "/stats/v1/rankings/bowlers?formatType=test"
+			}
+		},
+		"schema": {
+			"type": "object",
+			"properties": {
+				"rank": {
+					"type": "array",
+					"items": {
+						"type": "object",
+						"properties": {
+							"id": {
+								"type": "string"
+							},
+							"rank": {
+								"type": "string"
+							},
+							"name": {
+								"type": "string"
+							},
+							"country": {
+								"type": "string"
+							},
+							"rating": {
+								"type": "string"
+							},
+							"points": {
+								"type": "string"
+							},
+							"lastUpdatedOn": {
+								"type": "string"
+							},
+							"trend": {
+								"type": "string"
+							},
+							"faceImageId": {
+								"type": "string"
+							},
+							"countryId": {
+								"type": "string"
+							},
+							"avg": {
+								"type": "string"
+							}
+						}
+					}
+				},
+				"appIndex": {
+					"type": "object",
+					"properties": {
+						"seoTitle": {
+							"type": "string"
+						},
+						"webURL": {
+							"type": "string"
+						}
+					}
+				}
+			}
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

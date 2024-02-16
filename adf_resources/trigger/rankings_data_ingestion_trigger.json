@@ -1,0 +1,24 @@
+{
+	"name": "rankings_data_ingestion_trigger",
+	"properties": {
+		"annotations": [],
+		"runtimeState": "Started",
+		"pipelines": [
+			{
+				"pipelineReference": {
+					"referenceName": "rankings_data_ingestions",
+					"type": "PipelineReference"
+				}
+			}
+		],
+		"type": "ScheduleTrigger",
+		"typeProperties": {
+			"recurrence": {
+				"frequency": "Day",
+				"interval": 1,
+				"startTime": "2024-02-16T09:00:00",
+				"timeZone": "Eastern Standard Time"
+			}
+		}
+	}
+}

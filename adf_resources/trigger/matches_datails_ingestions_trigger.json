@@ -1,0 +1,24 @@
+{
+	"name": "matches_datails_ingestions_trigger",
+	"properties": {
+		"annotations": [],
+		"runtimeState": "Started",
+		"pipelines": [
+			{
+				"pipelineReference": {
+					"referenceName": "matches_details_ingestions",
+					"type": "PipelineReference"
+				}
+			}
+		],
+		"type": "ScheduleTrigger",
+		"typeProperties": {
+			"recurrence": {
+				"frequency": "Hour",
+				"interval": 2,
+				"startTime": "2024-02-15T21:00:00",
+				"timeZone": "Eastern Standard Time"
+			}
+		}
+	}
+}
