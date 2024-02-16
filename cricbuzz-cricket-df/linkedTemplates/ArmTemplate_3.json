@@ -1,0 +1,999 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "cricbuzz-cricket-df"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/Rankings_DataFlow')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "ODIRankingsSink",
+								"type": "DatasetReference"
+							},
+							"name": "ODIBatsmanRankingsSource",
+							"description": "Import data from ODIBatsmanRankingsSink"
+						},
+						{
+							"dataset": {
+								"referenceName": "TestBatsmanRankingSink",
+								"type": "DatasetReference"
+							},
+							"name": "TestBatsmanRankingSource"
+						},
+						{
+							"dataset": {
+								"referenceName": "T20BatsmanRankingsSink",
+								"type": "DatasetReference"
+							},
+							"name": "T20BatsmanRankingsSource"
+						},
+						{
+							"dataset": {
+								"referenceName": "ODIBowlersRankingsSink",
+								"type": "DatasetReference"
+							},
+							"name": "ODIBowlersRankingsSource"
+						},
+						{
+							"dataset": {
+								"referenceName": "TestBowlersRankingsSink",
+								"type": "DatasetReference"
+							},
+							"name": "TestBowlersRankingsSource"
+						},
+						{
+							"dataset": {
+								"referenceName": "T20BowlerRankingsSink",
+								"type": "DatasetReference"
+							},
+							"name": "T20BowlersRankingsSource"
+						},
+						{
+							"dataset": {
+								"referenceName": "ODIAllroundersRankingsSink",
+								"type": "DatasetReference"
+							},
+							"name": "ODIAllroundersRankingsSource"
+						},
+						{
+							"dataset": {
+								"referenceName": "TestAllroundersRankingsSink",
+								"type": "DatasetReference"
+							},
+							"name": "TestAllroundersRankingsSource"
+						},
+						{
+							"dataset": {
+								"referenceName": "T20AllroundersRankingsSink",
+								"type": "DatasetReference"
+							},
+							"name": "T20AllroundersRankingsSource"
+						},
+						{
+							"dataset": {
+								"referenceName": "ODITeamsRankingsSink",
+								"type": "DatasetReference"
+							},
+							"name": "ODITeamsRankingsSource"
+						},
+						{
+							"dataset": {
+								"referenceName": "TestTeamsRankingsSink",
+								"type": "DatasetReference"
+							},
+							"name": "TestTeamsRankingsSource"
+						},
+						{
+							"dataset": {
+								"referenceName": "T20TeamsRankingsSink",
+								"type": "DatasetReference"
+							},
+							"name": "T20TeamsRankingsSource"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "Transformed_Data",
+								"type": "DatasetReference"
+							},
+							"name": "sink1"
+						},
+						{
+							"dataset": {
+								"referenceName": "Transformed_Data",
+								"type": "DatasetReference"
+							},
+							"name": "sink2"
+						},
+						{
+							"dataset": {
+								"referenceName": "Transformed_Data",
+								"type": "DatasetReference"
+							},
+							"name": "sink3"
+						},
+						{
+							"dataset": {
+								"referenceName": "Transformed_Data",
+								"type": "DatasetReference"
+							},
+							"name": "sink4"
+						},
+						{
+							"dataset": {
+								"referenceName": "Transformed_Data",
+								"type": "DatasetReference"
+							},
+							"name": "sink5"
+						},
+						{
+							"dataset": {
+								"referenceName": "Transformed_Data",
+								"type": "DatasetReference"
+							},
+							"name": "sink6"
+						},
+						{
+							"dataset": {
+								"referenceName": "Transformed_Data",
+								"type": "DatasetReference"
+							},
+							"name": "sink7"
+						},
+						{
+							"dataset": {
+								"referenceName": "Transformed_Data",
+								"type": "DatasetReference"
+							},
+							"name": "sink8"
+						},
+						{
+							"dataset": {
+								"referenceName": "Transformed_Data",
+								"type": "DatasetReference"
+							},
+							"name": "sink9"
+						},
+						{
+							"dataset": {
+								"referenceName": "Transformed_Data",
+								"type": "DatasetReference"
+							},
+							"name": "sink10"
+						},
+						{
+							"dataset": {
+								"referenceName": "Transformed_Data",
+								"type": "DatasetReference"
+							},
+							"name": "sink11"
+						},
+						{
+							"dataset": {
+								"referenceName": "Transformed_Data",
+								"type": "DatasetReference"
+							},
+							"name": "sink12"
+						}
+					],
+					"transformations": [
+						{
+							"name": "flatten1"
+						},
+						{
+							"name": "cast1"
+						},
+						{
+							"name": "flatten2"
+						},
+						{
+							"name": "cast2"
+						},
+						{
+							"name": "flatten3"
+						},
+						{
+							"name": "cast3"
+						},
+						{
+							"name": "flatten4"
+						},
+						{
+							"name": "cast4"
+						},
+						{
+							"name": "flatten5"
+						},
+						{
+							"name": "cast5"
+						},
+						{
+							"name": "flatten6"
+						},
+						{
+							"name": "cast6"
+						},
+						{
+							"name": "flatten7"
+						},
+						{
+							"name": "cast7"
+						},
+						{
+							"name": "flatten8"
+						},
+						{
+							"name": "cast8"
+						},
+						{
+							"name": "flatten9"
+						},
+						{
+							"name": "cast9"
+						},
+						{
+							"name": "flatten10"
+						},
+						{
+							"name": "cast10"
+						},
+						{
+							"name": "flatten11"
+						},
+						{
+							"name": "flatten12"
+						},
+						{
+							"name": "cast11"
+						},
+						{
+							"name": "cast12"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          rank as (id as string, rank as string, name as string, country as string, rating as string, points as string, lastUpdatedOn as string, trend as string, faceImageId as string, countryId as string, avg as string)[],",
+						"          appIndex as (seoTitle as string, webURL as string)",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     documentForm: 'arrayOfDocuments') ~> ODIBatsmanRankingsSource",
+						"source(output(",
+						"          rank as (id as string, rank as string, name as string, country as string, rating as string, points as string, lastUpdatedOn as string, trend as string, faceImageId as string, countryId as string, avg as string)[],",
+						"          appIndex as (seoTitle as string, webURL as string)",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     documentForm: 'arrayOfDocuments') ~> TestBatsmanRankingSource",
+						"source(output(",
+						"          rank as (id as string, rank as string, name as string, country as string, rating as string, points as string, lastUpdatedOn as string, trend as string, faceImageId as string, countryId as string, avg as string)[],",
+						"          appIndex as (seoTitle as string, webURL as string)",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     documentForm: 'arrayOfDocuments') ~> T20BatsmanRankingsSource",
+						"source(output(",
+						"          rank as (id as string, rank as string, name as string, country as string, rating as string, points as string, lastUpdatedOn as string, trend as string, faceImageId as string, countryId as string, avg as string)[],",
+						"          appIndex as (seoTitle as string, webURL as string)",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     documentForm: 'arrayOfDocuments') ~> ODIBowlersRankingsSource",
+						"source(output(",
+						"          rank as (id as string, rank as string, name as string, country as string, rating as string, points as string, lastUpdatedOn as string, trend as string, faceImageId as string, countryId as string, avg as string)[],",
+						"          appIndex as (seoTitle as string, webURL as string)",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     documentForm: 'arrayOfDocuments') ~> TestBowlersRankingsSource",
+						"source(output(",
+						"          rank as (id as string, rank as string, name as string, country as string, rating as string, points as string, lastUpdatedOn as string, trend as string, faceImageId as string, countryId as string, avg as string)[],",
+						"          appIndex as (seoTitle as string, webURL as string)",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     documentForm: 'arrayOfDocuments') ~> T20BowlersRankingsSource",
+						"source(output(",
+						"          rank as (id as string, rank as string, name as string, country as string, rating as string, points as string, lastUpdatedOn as string, trend as string, faceImageId as string, countryId as string)[],",
+						"          appIndex as (seoTitle as string, webURL as string)",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     documentForm: 'arrayOfDocuments') ~> ODIAllroundersRankingsSource",
+						"source(output(",
+						"          rank as (id as string, rank as string, name as string, country as string, rating as string, points as string, lastUpdatedOn as string, trend as string, faceImageId as string, countryId as string)[],",
+						"          appIndex as (seoTitle as string, webURL as string)",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     documentForm: 'arrayOfDocuments') ~> TestAllroundersRankingsSource",
+						"source(output(",
+						"          rank as (id as string, rank as string, name as string, country as string, rating as string, points as string, lastUpdatedOn as string, trend as string, faceImageId as string, countryId as string)[],",
+						"          appIndex as (seoTitle as string, webURL as string)",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     documentForm: 'arrayOfDocuments') ~> T20AllroundersRankingsSource",
+						"source(output(",
+						"          rank as (id as string, rank as string, name as string, rating as string, matches as string, points as string, lastUpdatedOn as string, imageId as string)[],",
+						"          appIndex as (seoTitle as string, webURL as string)",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     documentForm: 'arrayOfDocuments') ~> ODITeamsRankingsSource",
+						"source(output(",
+						"          rank as (id as string, rank as string, name as string, rating as string, matches as string, points as string, lastUpdatedOn as string, imageId as string)[],",
+						"          appIndex as (seoTitle as string, webURL as string)",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     documentForm: 'arrayOfDocuments') ~> TestTeamsRankingsSource",
+						"source(output(",
+						"          rank as (id as string, rank as string, name as string, rating as string, matches as string, points as string, lastUpdatedOn as string, imageId as string)[],",
+						"          appIndex as (seoTitle as string, webURL as string)",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     documentForm: 'arrayOfDocuments') ~> T20TeamsRankingsSource",
+						"ODIBatsmanRankingsSource foldDown(unroll(rank),",
+						"     mapColumn(",
+						"          player_id = rank.id,",
+						"          player_rank = rank.rank,",
+						"          player_name = rank.name,",
+						"          player_country = rank.country,",
+						"          player_rating = rank.rating,",
+						"          player_points = rank.points,",
+						"          ranking_lastUpdatedOn = rank.lastUpdatedOn,",
+						"          player_countryId = rank.countryId,",
+						"          player_odi_avg = rank.avg,",
+						"          app_seoTitle = appIndex.seoTitle",
+						"     ),",
+						"     skipDuplicateMapInputs: false,",
+						"     skipDuplicateMapOutputs: false) ~> flatten1",
+						"flatten1 cast(output(",
+						"          player_id as integer,",
+						"          player_rank as integer '000',",
+						"          player_rating as integer,",
+						"          player_points as integer,",
+						"          ranking_lastUpdatedOn as date 'yyyy-MM-dd',",
+						"          player_countryId as integer,",
+						"          player_odi_avg as float",
+						"     ),",
+						"     errors: true) ~> cast1",
+						"TestBatsmanRankingSource foldDown(unroll(rank),",
+						"     mapColumn(",
+						"          player_id = rank.id,",
+						"          player_rank = rank.rank,",
+						"          player_name = rank.name,",
+						"          player_country = rank.country,",
+						"          player_rating = rank.rating,",
+						"          player_points = rank.points,",
+						"          ranking_lastUpdatedOn = rank.lastUpdatedOn,",
+						"          player_countryId = rank.countryId,",
+						"          player_test_avg = rank.avg,",
+						"          app_seo_title = appIndex.seoTitle",
+						"     ),",
+						"     skipDuplicateMapInputs: false,",
+						"     skipDuplicateMapOutputs: false) ~> flatten2",
+						"flatten2 cast(output(",
+						"          player_id as integer,",
+						"          player_rank as integer '000',",
+						"          player_rating as integer,",
+						"          player_points as integer,",
+						"          ranking_lastUpdatedOn as date 'yyyy-MM-dd',",
+						"          player_countryId as integer,",
+						"          player_test_avg as float",
+						"     ),",
+						"     errors: true) ~> cast2",
+						"T20BatsmanRankingsSource foldDown(unroll(rank),",
+						"     mapColumn(",
+						"          player_id = rank.id,",
+						"          player_rank = rank.rank,",
+						"          player_name = rank.name,",
+						"          player_country = rank.country,",
+						"          player_rating = rank.rating,",
+						"          player_points = rank.points,",
+						"          ranking_lastUpdatedOn = rank.lastUpdatedOn,",
+						"          player_countryId = rank.countryId,",
+						"          player_t20_avg = rank.avg,",
+						"          app_seo_title = appIndex.seoTitle",
+						"     ),",
+						"     skipDuplicateMapInputs: false,",
+						"     skipDuplicateMapOutputs: false) ~> flatten3",
+						"flatten3 cast(output(",
+						"          player_id as integer,",
+						"          player_rank as integer '000',",
+						"          player_rating as integer,",
+						"          player_points as integer,",
+						"          ranking_lastUpdatedOn as date 'yyyy-MM-dd',",
+						"          player_countryId as integer,",
+						"          player_t20_avg as float",
+						"     ),",
+						"     errors: true) ~> cast3",
+						"ODIBowlersRankingsSource foldDown(unroll(rank),",
+						"     mapColumn(",
+						"          player_id = rank.id,",
+						"          player_rank = rank.rank,",
+						"          player_name = rank.name,",
+						"          player_country = rank.country,",
+						"          player_rating = rank.rating,",
+						"          player_points = rank.points,",
+						"          ranking_lastUpdatedOn = rank.lastUpdatedOn,",
+						"          player_countryId = rank.countryId,",
+						"          player_avg = rank.avg,",
+						"          app_seo_title = appIndex.seoTitle",
+						"     ),",
+						"     skipDuplicateMapInputs: false,",
+						"     skipDuplicateMapOutputs: false) ~> flatten4",
+						"flatten4 cast(output(",
+						"          player_id as integer,",
+						"          player_rank as integer '000',",
+						"          player_rating as integer,",
+						"          player_points as integer,",
+						"          ranking_lastUpdatedOn as date 'yyyy-MM-dd',",
+						"          player_countryId as integer,",
+						"          player_avg as float",
+						"     ),",
+						"     errors: true) ~> cast4",
+						"TestBowlersRankingsSource foldDown(unroll(rank),",
+						"     mapColumn(",
+						"          player_id = rank.id,",
+						"          player_rank = rank.rank,",
+						"          player_name = rank.name,",
+						"          player_country = rank.country,",
+						"          player_rating = rank.rating,",
+						"          player_points = rank.points,",
+						"          ranking_lastUpdatedOn = rank.lastUpdatedOn,",
+						"          player_countryId = rank.countryId,",
+						"          player_avg = rank.avg,",
+						"          app_seo_title = appIndex.seoTitle",
+						"     ),",
+						"     skipDuplicateMapInputs: false,",
+						"     skipDuplicateMapOutputs: false) ~> flatten5",
+						"flatten5 cast(output(",
+						"          player_id as integer,",
+						"          player_rank as integer '000',",
+						"          player_rating as integer,",
+						"          player_points as integer,",
+						"          ranking_lastUpdatedOn as date 'yyyy-MM-dd',",
+						"          player_countryId as integer,",
+						"          player_avg as float",
+						"     ),",
+						"     errors: true) ~> cast5",
+						"T20BowlersRankingsSource foldDown(unroll(rank),",
+						"     mapColumn(",
+						"          player_id = rank.id,",
+						"          player_rank = rank.rank,",
+						"          player_name = rank.name,",
+						"          player_country = rank.country,",
+						"          player_rating = rank.rating,",
+						"          player_points = rank.points,",
+						"          ranking_lastUpdatedOn = rank.lastUpdatedOn,",
+						"          player_countryId = rank.countryId,",
+						"          player_avg = rank.avg,",
+						"          app_seo_title = appIndex.seoTitle",
+						"     ),",
+						"     skipDuplicateMapInputs: false,",
+						"     skipDuplicateMapOutputs: false) ~> flatten6",
+						"flatten6 cast(output(",
+						"          player_id as integer,",
+						"          player_rank as integer '000',",
+						"          player_rating as integer,",
+						"          player_points as integer,",
+						"          ranking_lastUpdatedOn as date 'yyyy-MM-dd',",
+						"          player_countryId as integer,",
+						"          player_avg as float",
+						"     ),",
+						"     errors: true) ~> cast6",
+						"ODIAllroundersRankingsSource foldDown(unroll(rank),",
+						"     mapColumn(",
+						"          player_id = rank.id,",
+						"          player_rank = rank.rank,",
+						"          player_name = rank.name,",
+						"          player_country = rank.country,",
+						"          player_rating = rank.rating,",
+						"          player_points = rank.points,",
+						"          ranking_lastUpdatedOn = rank.lastUpdatedOn,",
+						"          player_countryId = rank.countryId,",
+						"          app_seo_title = appIndex.seoTitle",
+						"     ),",
+						"     skipDuplicateMapInputs: false,",
+						"     skipDuplicateMapOutputs: false) ~> flatten7",
+						"flatten7 cast(output(",
+						"          player_id as integer,",
+						"          player_rank as integer '000',",
+						"          player_rating as integer,",
+						"          player_points as integer,",
+						"          ranking_lastUpdatedOn as date 'yyyy-MM-dd',",
+						"          player_countryId as integer",
+						"     ),",
+						"     errors: true) ~> cast7",
+						"TestAllroundersRankingsSource foldDown(unroll(rank),",
+						"     mapColumn(",
+						"          player_id = rank.id,",
+						"          player_rank = rank.rank,",
+						"          player_name = rank.name,",
+						"          player_country = rank.country,",
+						"          player_rating = rank.rating,",
+						"          player_points = rank.points,",
+						"          ranking_lastUpdatedOn = rank.lastUpdatedOn,",
+						"          player_countryId = rank.countryId,",
+						"          app_seo_title = appIndex.seoTitle",
+						"     ),",
+						"     skipDuplicateMapInputs: false,",
+						"     skipDuplicateMapOutputs: false) ~> flatten8",
+						"flatten8 cast(output(",
+						"          player_id as integer,",
+						"          player_rank as integer '000',",
+						"          player_rating as integer,",
+						"          player_points as integer,",
+						"          ranking_lastUpdatedOn as date 'yyyy-MM-dd',",
+						"          player_countryId as integer",
+						"     ),",
+						"     errors: true) ~> cast8",
+						"T20AllroundersRankingsSource foldDown(unroll(rank),",
+						"     mapColumn(",
+						"          player_id = rank.id,",
+						"          player_rank = rank.rank,",
+						"          player_name = rank.name,",
+						"          player_country = rank.country,",
+						"          player_rating = rank.rating,",
+						"          player_points = rank.points,",
+						"          ranking_lastUpdatedOn = rank.lastUpdatedOn,",
+						"          player_countryId = rank.countryId,",
+						"          all_seo_title = appIndex.seoTitle",
+						"     ),",
+						"     skipDuplicateMapInputs: false,",
+						"     skipDuplicateMapOutputs: false) ~> flatten9",
+						"flatten9 cast(output(",
+						"          player_id as integer,",
+						"          player_rank as integer '000',",
+						"          player_rating as integer,",
+						"          player_points as integer,",
+						"          ranking_lastUpdatedOn as date 'yyyy-MM-dd',",
+						"          player_countryId as integer",
+						"     ),",
+						"     errors: true) ~> cast9",
+						"ODITeamsRankingsSource foldDown(unroll(rank),",
+						"     mapColumn(",
+						"          team_id = rank.id,",
+						"          team_rank = rank.rank,",
+						"          team_name = rank.name,",
+						"          team_rating = rank.rating,",
+						"          team_matches = rank.matches,",
+						"          team_points = rank.points,",
+						"          ranking_lastUpdatedOn = rank.lastUpdatedOn,",
+						"          app_seo_title = appIndex.seoTitle",
+						"     ),",
+						"     skipDuplicateMapInputs: false,",
+						"     skipDuplicateMapOutputs: false) ~> flatten10",
+						"flatten10 cast(output(",
+						"          team_id as integer,",
+						"          team_rank as integer '000',",
+						"          team_rating as integer,",
+						"          team_matches as integer,",
+						"          team_points as integer,",
+						"          ranking_lastUpdatedOn as date 'yyyy-MM-dd'",
+						"     ),",
+						"     errors: true) ~> cast10",
+						"TestTeamsRankingsSource foldDown(unroll(rank),",
+						"     mapColumn(",
+						"          team_id = rank.id,",
+						"          team_rank = rank.rank,",
+						"          team_name = rank.name,",
+						"          team_rating = rank.rating,",
+						"          team_matches = rank.matches,",
+						"          team_points = rank.points,",
+						"          ranking_lastUpdatedOn = rank.lastUpdatedOn,",
+						"          app_seo_title = appIndex.seoTitle",
+						"     ),",
+						"     skipDuplicateMapInputs: false,",
+						"     skipDuplicateMapOutputs: false) ~> flatten11",
+						"T20TeamsRankingsSource foldDown(unroll(rank),",
+						"     mapColumn(",
+						"          team_id = rank.id,",
+						"          team_rank = rank.rank,",
+						"          team_name = rank.name,",
+						"          team_rating = rank.rating,",
+						"          team_matches = rank.matches,",
+						"          team_points = rank.points,",
+						"          ranking_lastUpdatedOn = rank.lastUpdatedOn,",
+						"          app_seo_title = appIndex.seoTitle",
+						"     ),",
+						"     skipDuplicateMapInputs: false,",
+						"     skipDuplicateMapOutputs: false) ~> flatten12",
+						"flatten11 cast(output(",
+						"          team_id as integer,",
+						"          team_rank as integer '000',",
+						"          team_rating as integer,",
+						"          team_matches as integer,",
+						"          team_points as integer,",
+						"          ranking_lastUpdatedOn as date 'yyyy-MM-dd'",
+						"     ),",
+						"     errors: true) ~> cast11",
+						"flatten12 cast(output(",
+						"          team_id as integer,",
+						"          team_rank as integer '000',",
+						"          team_rating as integer,",
+						"          team_matches as integer,",
+						"          team_points as integer,",
+						"          ranking_lastUpdatedOn as date 'yyyy-MM-dd'",
+						"     ),",
+						"     errors: true) ~> cast12",
+						"cast1 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     partitionFileNames:['odi_batsman_rankings.csv'],",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     partitionBy('hash', 1)) ~> sink1",
+						"cast2 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     partitionFileNames:['test_batsman_rankings.csv'],",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     partitionBy('hash', 1)) ~> sink2",
+						"cast3 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     partitionFileNames:['t20_batsman_rankings.csv'],",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     partitionBy('hash', 1)) ~> sink3",
+						"cast4 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     partitionFileNames:['odi_bowlers_rankings.csv'],",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     partitionBy('hash', 1)) ~> sink4",
+						"cast5 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     partitionFileNames:['test_bowlers_rankings.csv'],",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     partitionBy('hash', 1)) ~> sink5",
+						"cast6 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     partitionFileNames:['t20_bowlers_rankings.csv'],",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     partitionBy('hash', 1)) ~> sink6",
+						"cast7 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     partitionFileNames:['odi_allrounders_rankings.csv'],",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     partitionBy('hash', 1)) ~> sink7",
+						"cast8 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     partitionFileNames:['test_allrounders_rankings.csv'],",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     partitionBy('hash', 1)) ~> sink8",
+						"cast9 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     partitionFileNames:['t20_allrounders_rankings.csv'],",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     partitionBy('hash', 1)) ~> sink9",
+						"cast10 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     partitionFileNames:['odi_teams_rankings.csv'],",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     partitionBy('hash', 1)) ~> sink10",
+						"cast11 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     partitionFileNames:['test_teams_rankings.csv'],",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     partitionBy('hash', 1)) ~> sink11",
+						"cast12 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     partitionFileNames:['t20_teams_rankings.csv'],",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     partitionBy('hash', 1)) ~> sink12"
+					]
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/matches_details_transformation')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Matches Details",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "Matches_Details_DataFlow",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"LiveMatchesSource": {},
+									"RecentMatchesSource": {},
+									"UpcomingsMatchesSource": {},
+									"LiveMatchesSink": {},
+									"RecentMatchesSink": {},
+									"UpcomingMatchesSink": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": [],
+				"lastPublishTime": "2024-02-14T22:30:15Z"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/rankings_data_transformations')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Rankings",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "Rankings_DataFlow",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"ODIBatsmanRankingsSource": {},
+									"TestBatsmanRankingSource": {},
+									"T20BatsmanRankingsSource": {},
+									"ODIBowlersRankingsSource": {},
+									"TestBowlersRankingsSource": {},
+									"T20BowlersRankingsSource": {},
+									"ODIAllroundersRankingsSource": {},
+									"TestAllroundersRankingsSource": {},
+									"T20AllroundersRankingsSource": {},
+									"ODITeamsRankingsSource": {},
+									"TestTeamsRankingsSource": {},
+									"T20TeamsRankingsSource": {},
+									"sink1": {},
+									"sink2": {},
+									"sink3": {},
+									"sink4": {},
+									"sink5": {},
+									"sink6": {},
+									"sink7": {},
+									"sink8": {},
+									"sink9": {},
+									"sink10": {},
+									"sink11": {},
+									"sink12": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": [],
+				"lastPublishTime": "2024-02-14T20:51:20Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/Rankings_DataFlow')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/matches_datails_ingestions_trigger')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Started",
+				"pipelines": [
+					{
+						"pipelineReference": {
+							"referenceName": "matches_details_ingestions",
+							"type": "PipelineReference"
+						},
+						"parameters": {}
+					}
+				],
+				"type": "ScheduleTrigger",
+				"typeProperties": {
+					"recurrence": {
+						"frequency": "Hour",
+						"interval": 2,
+						"startTime": "2024-02-15T21:00:00",
+						"timeZone": "Eastern Standard Time"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/rankings_data_ingestion_trigger')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Started",
+				"pipelines": [
+					{
+						"pipelineReference": {
+							"referenceName": "rankings_data_ingestions",
+							"type": "PipelineReference"
+						},
+						"parameters": {}
+					}
+				],
+				"type": "ScheduleTrigger",
+				"typeProperties": {
+					"recurrence": {
+						"frequency": "Day",
+						"interval": 1,
+						"startTime": "2024-02-16T09:00:00",
+						"timeZone": "Eastern Standard Time"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/matches_details_transformation_trigger')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Started",
+				"pipelines": [
+					{
+						"pipelineReference": {
+							"referenceName": "matches_details_transformation",
+							"type": "PipelineReference"
+						},
+						"parameters": {}
+					}
+				],
+				"type": "ScheduleTrigger",
+				"typeProperties": {
+					"recurrence": {
+						"frequency": "Hour",
+						"interval": 2,
+						"startTime": "2024-02-15T10:00:00",
+						"timeZone": "Eastern Standard Time"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/matches_details_transformation')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/rankings_data_transformation_trigger')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Started",
+				"pipelines": [
+					{
+						"pipelineReference": {
+							"referenceName": "rankings_data_transformations",
+							"type": "PipelineReference"
+						},
+						"parameters": {}
+					}
+				],
+				"type": "ScheduleTrigger",
+				"typeProperties": {
+					"recurrence": {
+						"frequency": "Day",
+						"interval": 1,
+						"startTime": "2024-02-16T10:00:00",
+						"timeZone": "Eastern Standard Time"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/rankings_data_transformations')]"
+			]
+		}
+	]
+}

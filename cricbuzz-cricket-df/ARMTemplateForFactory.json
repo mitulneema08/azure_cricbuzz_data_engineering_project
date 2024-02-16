@@ -1,0 +1,6121 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "cricbuzz-cricket-df"
+		},
+		"AzureDataLakeStorage1_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'AzureDataLakeStorage1'"
+		},
+		"AzureDataLakeStorage2_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'AzureDataLakeStorage2'"
+		},
+		"ODIBatsmanRankingsCSV_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'ODIBatsmanRankingsCSV'"
+		},
+		"ODIBatsmanRankingsTOCSV_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'ODIBatsmanRankingsTOCSV'"
+		},
+		"AzureDataLakeStorage1_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://cricbuzzcricketdata.dfs.core.windows.net/"
+		},
+		"AzureDataLakeStorage2_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://cricbuzzcricketdata.dfs.core.windows.net/"
+		},
+		"BatsmanStatsHTTP_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://cricbuzz-cricket.p.rapidapi.com/"
+		},
+		"BatsmanStatsRestHTTP_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://cricbuzz-cricket.p.rapidapi.com/"
+		},
+		"HttpServer1_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://cricbuzz-cricket.p.rapidapi.com/"
+		},
+		"LiveScoreHTTP_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://cricbuzz-cricket.p.rapidapi.com/"
+		},
+		"ODIAllrounderRankingsHTTP_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://cricbuzz-cricket.p.rapidapi.com/"
+		},
+		"ODIBatsmanRankingsCSV_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://cricbuzzcricketdata.dfs.core.windows.net/"
+		},
+		"ODIBatsmanRankingsTOCSV_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://cricbuzzcricketdata.dfs.core.windows.net/"
+		},
+		"ODIBowlingRankingHTTP_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://cricbuzz-cricket.p.rapidapi.com/"
+		},
+		"ODIRankingsHTTP_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://cricbuzz-cricket.p.rapidapi.com"
+		},
+		"ODITeamsRankings_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://cricbuzz-cricket.p.rapidapi.com/"
+		},
+		"RecentMatchesHTTP_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://cricbuzz-cricket.p.rapidapi.com/"
+		},
+		"T20AllroundersRankingsHTTP_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://cricbuzz-cricket.p.rapidapi.com/"
+		},
+		"T20BowlingRankingsHTTP_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://cricbuzz-cricket.p.rapidapi.com/"
+		},
+		"T20TeamsRankingsHTTP_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://cricbuzz-cricket.p.rapidapi.com/"
+		},
+		"TestAllroundersRankings HTTP_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://cricbuzz-cricket.p.rapidapi.com/"
+		},
+		"TestTeamsRankingsHTTP_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://cricbuzz-cricket.p.rapidapi.com/"
+		},
+		"UpcomingMatchesHTTP_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://cricbuzz-cricket.p.rapidapi.com/"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/BatsmanStats_ingestions')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Batsman Stats",
+						"type": "WebActivity",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"method": "GET",
+							"headers": {
+								"X-Rapidapi-Key": "7869ef2615mshb0b54f02d7ac6f3p186d89jsn01256e48c1ea",
+								"X-Rapidapi-Host": "cricbuzz-cricket.p.rapidapi.com"
+							},
+							"url": "https://cricbuzz-cricket.p.rapidapi.com/stats/v1/player/101/batting"
+						}
+					},
+					{
+						"name": "ForEach1",
+						"type": "ForEach",
+						"dependsOn": [
+							{
+								"activity": "Batsman Stats",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@range(1410,5)",
+								"type": "Expression"
+							},
+							"isSequential": true,
+							"activities": [
+								{
+									"name": "Copy data1",
+									"type": "Copy",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "0.12:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"source": {
+											"type": "RestSource",
+											"httpRequestTimeout": "00:01:40",
+											"requestInterval": "00.00:00:00.010",
+											"requestMethod": "GET",
+											"paginationRules": {
+												"supportRFC5988": "true"
+											}
+										},
+										"sink": {
+											"type": "JsonSink",
+											"storeSettings": {
+												"type": "AzureBlobFSWriteSettings",
+												"copyBehavior": "MergeFiles"
+											},
+											"formatSettings": {
+												"type": "JsonWriteSettings"
+											}
+										},
+										"enableStaging": false
+									},
+									"inputs": [
+										{
+											"referenceName": "BattingStatsHTTP",
+											"type": "DatasetReference",
+											"parameters": {
+												"playerID": {
+													"value": "@concat('/stats/v1/player/', item(), '/batting')",
+													"type": "Expression"
+												}
+											}
+										}
+									],
+									"outputs": [
+										{
+											"referenceName": "BatsmanStatsSink",
+											"type": "DatasetReference",
+											"parameters": {}
+										}
+									]
+								}
+							]
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": [],
+				"lastPublishTime": "2024-02-14T00:56:29Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/BattingStatsHTTP')]",
+				"[concat(variables('factoryId'), '/datasets/BatsmanStatsSink')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/matches_details_ingestions')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Live Matches",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "JsonSource",
+								"storeSettings": {
+									"type": "HttpReadSettings",
+									"requestMethod": "GET"
+								},
+								"formatSettings": {
+									"type": "JsonReadSettings"
+								}
+							},
+							"sink": {
+								"type": "JsonSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings"
+								},
+								"formatSettings": {
+									"type": "JsonWriteSettings"
+								}
+							},
+							"enableStaging": false
+						},
+						"inputs": [
+							{
+								"referenceName": "LiveScoreHTTP",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "LiveScoreSink",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					},
+					{
+						"name": "Recent Matches",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "Live Matches",
+								"dependencyConditions": [
+									"Completed"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "JsonSource",
+								"storeSettings": {
+									"type": "HttpReadSettings",
+									"requestMethod": "GET"
+								},
+								"formatSettings": {
+									"type": "JsonReadSettings"
+								}
+							},
+							"sink": {
+								"type": "JsonSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings"
+								},
+								"formatSettings": {
+									"type": "JsonWriteSettings"
+								}
+							},
+							"enableStaging": false
+						},
+						"inputs": [
+							{
+								"referenceName": "RecentMatchesHTTP",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "RecentMatchesSink",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					},
+					{
+						"name": "Upcoming Matches",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "Recent Matches",
+								"dependencyConditions": [
+									"Completed"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "JsonSource",
+								"storeSettings": {
+									"type": "HttpReadSettings",
+									"requestMethod": "GET"
+								},
+								"formatSettings": {
+									"type": "JsonReadSettings"
+								}
+							},
+							"sink": {
+								"type": "JsonSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings"
+								},
+								"formatSettings": {
+									"type": "JsonWriteSettings"
+								}
+							},
+							"enableStaging": false
+						},
+						"inputs": [
+							{
+								"referenceName": "UpcomingMatchesHTTP",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "UpcomingMatchesSink",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": [],
+				"lastPublishTime": "2024-02-14T22:29:36Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/LiveScoreHTTP')]",
+				"[concat(variables('factoryId'), '/datasets/LiveScoreSink')]",
+				"[concat(variables('factoryId'), '/datasets/RecentMatchesHTTP')]",
+				"[concat(variables('factoryId'), '/datasets/RecentMatchesSink')]",
+				"[concat(variables('factoryId'), '/datasets/UpcomingMatchesHTTP')]",
+				"[concat(variables('factoryId'), '/datasets/UpcomingMatchesSink')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/matches_details_transformation')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Matches Details",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "Matches_Details_DataFlow",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"LiveMatchesSource": {},
+									"RecentMatchesSource": {},
+									"UpcomingsMatchesSource": {},
+									"LiveMatchesSink": {},
+									"RecentMatchesSink": {},
+									"UpcomingMatchesSink": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": [],
+				"lastPublishTime": "2024-02-14T22:30:15Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/Matches_Details_DataFlow')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/rankings_data_ingestions')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "ODI Batsman Rankings",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "JsonSource",
+								"storeSettings": {
+									"type": "HttpReadSettings",
+									"requestMethod": "GET"
+								},
+								"formatSettings": {
+									"type": "JsonReadSettings"
+								}
+							},
+							"sink": {
+								"type": "JsonSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings"
+								},
+								"formatSettings": {
+									"type": "JsonWriteSettings"
+								}
+							},
+							"enableStaging": false
+						},
+						"inputs": [
+							{
+								"referenceName": "ODIBatsmanRankingsHTTP",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "ODIRankingsSink",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					},
+					{
+						"name": "Test Batsman Rankings",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "ODI Batsman Rankings",
+								"dependencyConditions": [
+									"Completed"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "JsonSource",
+								"storeSettings": {
+									"type": "HttpReadSettings",
+									"requestMethod": "GET"
+								},
+								"formatSettings": {
+									"type": "JsonReadSettings"
+								}
+							},
+							"sink": {
+								"type": "JsonSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings"
+								},
+								"formatSettings": {
+									"type": "JsonWriteSettings"
+								}
+							},
+							"enableStaging": false
+						},
+						"inputs": [
+							{
+								"referenceName": "TestBatsmanRankingHTTP",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "TestBatsmanRankingSink",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					},
+					{
+						"name": "T20 Batsman Rankings",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "Test Batsman Rankings",
+								"dependencyConditions": [
+									"Completed"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "JsonSource",
+								"storeSettings": {
+									"type": "HttpReadSettings",
+									"requestMethod": "GET"
+								},
+								"formatSettings": {
+									"type": "JsonReadSettings"
+								}
+							},
+							"sink": {
+								"type": "JsonSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings"
+								},
+								"formatSettings": {
+									"type": "JsonWriteSettings"
+								}
+							},
+							"enableStaging": false
+						},
+						"inputs": [
+							{
+								"referenceName": "T20BatsmanRankingsHTTP",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "T20BatsmanRankingsSink",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					},
+					{
+						"name": "ODI Bowlers Rankings",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "JsonSource",
+								"storeSettings": {
+									"type": "HttpReadSettings",
+									"requestMethod": "GET"
+								},
+								"formatSettings": {
+									"type": "JsonReadSettings"
+								}
+							},
+							"sink": {
+								"type": "JsonSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings"
+								},
+								"formatSettings": {
+									"type": "JsonWriteSettings"
+								}
+							},
+							"enableStaging": false
+						},
+						"inputs": [
+							{
+								"referenceName": "ODIBowlingRankingsHTTP",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "ODIBowlersRankingsSink",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					},
+					{
+						"name": "Test Bowlers Rankings",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "ODI Bowlers Rankings",
+								"dependencyConditions": [
+									"Completed"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "JsonSource",
+								"storeSettings": {
+									"type": "HttpReadSettings",
+									"requestMethod": "GET"
+								},
+								"formatSettings": {
+									"type": "JsonReadSettings"
+								}
+							},
+							"sink": {
+								"type": "JsonSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings"
+								},
+								"formatSettings": {
+									"type": "JsonWriteSettings"
+								}
+							},
+							"enableStaging": false
+						},
+						"inputs": [
+							{
+								"referenceName": "TestBowlingRankingsHTTP",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "TestBowlersRankingsSink",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					},
+					{
+						"name": "T20 Bowlers Rankings",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "Test Bowlers Rankings",
+								"dependencyConditions": [
+									"Completed"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "JsonSource",
+								"storeSettings": {
+									"type": "HttpReadSettings",
+									"requestMethod": "GET"
+								},
+								"formatSettings": {
+									"type": "JsonReadSettings"
+								}
+							},
+							"sink": {
+								"type": "JsonSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings"
+								},
+								"formatSettings": {
+									"type": "JsonWriteSettings"
+								}
+							},
+							"enableStaging": false
+						},
+						"inputs": [
+							{
+								"referenceName": "T20BowlingRankingsHTTP",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "T20BowlerRankingsSink",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					},
+					{
+						"name": "ODI Allrounder Rankings",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "JsonSource",
+								"storeSettings": {
+									"type": "HttpReadSettings",
+									"requestMethod": "GET"
+								},
+								"formatSettings": {
+									"type": "JsonReadSettings"
+								}
+							},
+							"sink": {
+								"type": "JsonSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings"
+								},
+								"formatSettings": {
+									"type": "JsonWriteSettings"
+								}
+							},
+							"enableStaging": false
+						},
+						"inputs": [
+							{
+								"referenceName": "ODIAllroundersRankingsHTTP",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "ODIAllroundersRankingsSink",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					},
+					{
+						"name": "Test Allrounders Rankings",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "ODI Allrounder Rankings",
+								"dependencyConditions": [
+									"Completed"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "JsonSource",
+								"storeSettings": {
+									"type": "HttpReadSettings",
+									"requestMethod": "GET"
+								},
+								"formatSettings": {
+									"type": "JsonReadSettings"
+								}
+							},
+							"sink": {
+								"type": "JsonSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings"
+								},
+								"formatSettings": {
+									"type": "JsonWriteSettings"
+								}
+							},
+							"enableStaging": false
+						},
+						"inputs": [
+							{
+								"referenceName": "TestAllroundersRankingsHTTP",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "TestAllroundersRankingsSink",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					},
+					{
+						"name": "T20 Allrounders Rankings",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "Test Allrounders Rankings",
+								"dependencyConditions": [
+									"Completed"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "JsonSource",
+								"storeSettings": {
+									"type": "HttpReadSettings",
+									"requestMethod": "GET"
+								},
+								"formatSettings": {
+									"type": "JsonReadSettings"
+								}
+							},
+							"sink": {
+								"type": "JsonSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings"
+								},
+								"formatSettings": {
+									"type": "JsonWriteSettings"
+								}
+							},
+							"enableStaging": false
+						},
+						"inputs": [
+							{
+								"referenceName": "T20AllroundersRankings",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "T20AllroundersRankingsSink",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					},
+					{
+						"name": "ODI Teams Rankings",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "JsonSource",
+								"storeSettings": {
+									"type": "HttpReadSettings",
+									"requestMethod": "GET"
+								},
+								"formatSettings": {
+									"type": "JsonReadSettings"
+								}
+							},
+							"sink": {
+								"type": "JsonSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings"
+								},
+								"formatSettings": {
+									"type": "JsonWriteSettings"
+								}
+							},
+							"enableStaging": false
+						},
+						"inputs": [
+							{
+								"referenceName": "ODITeamsRankingsHTTP",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "ODITeamsRankingsSink",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					},
+					{
+						"name": "Test Teams Rankings",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "ODI Teams Rankings",
+								"dependencyConditions": [
+									"Completed"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "JsonSource",
+								"storeSettings": {
+									"type": "HttpReadSettings",
+									"requestMethod": "GET"
+								},
+								"formatSettings": {
+									"type": "JsonReadSettings"
+								}
+							},
+							"sink": {
+								"type": "JsonSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings"
+								},
+								"formatSettings": {
+									"type": "JsonWriteSettings"
+								}
+							},
+							"enableStaging": false
+						},
+						"inputs": [
+							{
+								"referenceName": "TestTeamsRankingsHTTP",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "TestTeamsRankingsSink",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					},
+					{
+						"name": "T20 Teams Rankings",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "Test Teams Rankings",
+								"dependencyConditions": [
+									"Completed"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "JsonSource",
+								"storeSettings": {
+									"type": "HttpReadSettings",
+									"requestMethod": "GET"
+								},
+								"formatSettings": {
+									"type": "JsonReadSettings"
+								}
+							},
+							"sink": {
+								"type": "JsonSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings"
+								},
+								"formatSettings": {
+									"type": "JsonWriteSettings"
+								}
+							},
+							"enableStaging": false
+						},
+						"inputs": [
+							{
+								"referenceName": "T20TeamsRankingsHTTP",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "T20TeamsRankingsSink",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": [],
+				"lastPublishTime": "2024-02-15T15:55:51Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/ODIBatsmanRankingsHTTP')]",
+				"[concat(variables('factoryId'), '/datasets/ODIRankingsSink')]",
+				"[concat(variables('factoryId'), '/datasets/TestBatsmanRankingHTTP')]",
+				"[concat(variables('factoryId'), '/datasets/TestBatsmanRankingSink')]",
+				"[concat(variables('factoryId'), '/datasets/T20BatsmanRankingsHTTP')]",
+				"[concat(variables('factoryId'), '/datasets/T20BatsmanRankingsSink')]",
+				"[concat(variables('factoryId'), '/datasets/ODIBowlingRankingsHTTP')]",
+				"[concat(variables('factoryId'), '/datasets/ODIBowlersRankingsSink')]",
+				"[concat(variables('factoryId'), '/datasets/TestBowlingRankingsHTTP')]",
+				"[concat(variables('factoryId'), '/datasets/TestBowlersRankingsSink')]",
+				"[concat(variables('factoryId'), '/datasets/T20BowlingRankingsHTTP')]",
+				"[concat(variables('factoryId'), '/datasets/T20BowlerRankingsSink')]",
+				"[concat(variables('factoryId'), '/datasets/ODIAllroundersRankingsHTTP')]",
+				"[concat(variables('factoryId'), '/datasets/ODIAllroundersRankingsSink')]",
+				"[concat(variables('factoryId'), '/datasets/TestAllroundersRankingsHTTP')]",
+				"[concat(variables('factoryId'), '/datasets/TestAllroundersRankingsSink')]",
+				"[concat(variables('factoryId'), '/datasets/T20AllroundersRankings')]",
+				"[concat(variables('factoryId'), '/datasets/T20AllroundersRankingsSink')]",
+				"[concat(variables('factoryId'), '/datasets/ODITeamsRankingsHTTP')]",
+				"[concat(variables('factoryId'), '/datasets/ODITeamsRankingsSink')]",
+				"[concat(variables('factoryId'), '/datasets/TestTeamsRankingsHTTP')]",
+				"[concat(variables('factoryId'), '/datasets/TestTeamsRankingsSink')]",
+				"[concat(variables('factoryId'), '/datasets/T20TeamsRankingsHTTP')]",
+				"[concat(variables('factoryId'), '/datasets/T20TeamsRankingsSink')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/rankings_data_transformations')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Rankings",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "Rankings_DataFlow",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"ODIBatsmanRankingsSource": {},
+									"TestBatsmanRankingSource": {},
+									"T20BatsmanRankingsSource": {},
+									"ODIBowlersRankingsSource": {},
+									"TestBowlersRankingsSource": {},
+									"T20BowlersRankingsSource": {},
+									"ODIAllroundersRankingsSource": {},
+									"TestAllroundersRankingsSource": {},
+									"T20AllroundersRankingsSource": {},
+									"ODITeamsRankingsSource": {},
+									"TestTeamsRankingsSource": {},
+									"T20TeamsRankingsSource": {},
+									"sink1": {},
+									"sink2": {},
+									"sink3": {},
+									"sink4": {},
+									"sink5": {},
+									"sink6": {},
+									"sink7": {},
+									"sink8": {},
+									"sink9": {},
+									"sink10": {},
+									"sink11": {},
+									"sink12": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": [],
+				"lastPublishTime": "2024-02-14T20:51:20Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/Rankings_DataFlow')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/BatsmanStatsSink')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureDataLakeStorage2",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Json",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"folderPath": "cricbuzz-raw-data",
+						"fileSystem": "cricbuzz-cricket-container"
+					}
+				},
+				"schema": {}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureDataLakeStorage2')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/BattingStatsHTTP')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "BatsmanStatsRestHTTP",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"playerID": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "RestResource",
+				"typeProperties": {
+					"relativeUrl": {
+						"value": "@dataset().playerID",
+						"type": "Expression"
+					}
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/BatsmanStatsRestHTTP')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Json2')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "ODIBatsmanRankingsCSV",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Json",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "ODIBatsmanRankings.json",
+						"folderPath": "cricbuzz-raw-data",
+						"fileSystem": "cricbuzz-cricket-container"
+					}
+				},
+				"schema": {
+					"type": "object",
+					"properties": {
+						"rank": {
+							"type": "array",
+							"items": {
+								"type": "object",
+								"properties": {
+									"id": {
+										"type": "string"
+									},
+									"rank": {
+										"type": "string"
+									},
+									"name": {
+										"type": "string"
+									},
+									"country": {
+										"type": "string"
+									},
+									"rating": {
+										"type": "string"
+									},
+									"points": {
+										"type": "string"
+									},
+									"lastUpdatedOn": {
+										"type": "string"
+									},
+									"trend": {
+										"type": "string"
+									},
+									"faceImageId": {
+										"type": "string"
+									},
+									"countryId": {
+										"type": "string"
+									},
+									"avg": {
+										"type": "string"
+									}
+								}
+							}
+						},
+						"appIndex": {
+							"type": "object",
+							"properties": {
+								"seoTitle": {
+									"type": "string"
+								},
+								"webURL": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/ODIBatsmanRankingsCSV')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/LiveScore')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureDataLakeStorage2",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "live_score.csv",
+						"folderPath": "cricbuzz-transformed-data",
+						"fileSystem": "cricbuzz-cricket-container"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureDataLakeStorage2')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/LiveScoreHTTP')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LiveScoreHTTP",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Json",
+				"typeProperties": {
+					"location": {
+						"type": "HttpServerLocation",
+						"relativeUrl": "/matches/v1/live"
+					}
+				},
+				"schema": {
+					"type": "object",
+					"properties": {
+						"typeMatches": {
+							"type": "array",
+							"items": {
+								"type": "object",
+								"properties": {
+									"matchType": {
+										"type": "string"
+									},
+									"seriesMatches": {
+										"type": "array",
+										"items": {
+											"type": "object",
+											"properties": {
+												"seriesAdWrapper": {
+													"type": "object",
+													"properties": {
+														"seriesId": {
+															"type": "integer"
+														},
+														"seriesName": {
+															"type": "string"
+														},
+														"matches": {
+															"type": "array",
+															"items": {
+																"type": "object",
+																"properties": {
+																	"matchInfo": {
+																		"type": "object",
+																		"properties": {
+																			"matchId": {
+																				"type": "integer"
+																			},
+																			"seriesId": {
+																				"type": "integer"
+																			},
+																			"seriesName": {
+																				"type": "string"
+																			},
+																			"matchDesc": {
+																				"type": "string"
+																			},
+																			"matchFormat": {
+																				"type": "string"
+																			},
+																			"startDate": {
+																				"type": "string"
+																			},
+																			"endDate": {
+																				"type": "string"
+																			},
+																			"state": {
+																				"type": "string"
+																			},
+																			"status": {
+																				"type": "string"
+																			},
+																			"team1": {
+																				"type": "object",
+																				"properties": {
+																					"teamId": {
+																						"type": "integer"
+																					},
+																					"teamName": {
+																						"type": "string"
+																					},
+																					"teamSName": {
+																						"type": "string"
+																					},
+																					"imageId": {
+																						"type": "integer"
+																					}
+																				}
+																			},
+																			"team2": {
+																				"type": "object",
+																				"properties": {
+																					"teamId": {
+																						"type": "integer"
+																					},
+																					"teamName": {
+																						"type": "string"
+																					},
+																					"teamSName": {
+																						"type": "string"
+																					},
+																					"imageId": {
+																						"type": "integer"
+																					}
+																				}
+																			},
+																			"venueInfo": {
+																				"type": "object",
+																				"properties": {
+																					"id": {
+																						"type": "integer"
+																					},
+																					"ground": {
+																						"type": "string"
+																					},
+																					"city": {
+																						"type": "string"
+																					},
+																					"timezone": {
+																						"type": "string"
+																					},
+																					"latitude": {
+																						"type": "string"
+																					},
+																					"longitude": {
+																						"type": "string"
+																					}
+																				}
+																			},
+																			"currBatTeamId": {
+																				"type": "integer"
+																			},
+																			"seriesStartDt": {
+																				"type": "string"
+																			},
+																			"seriesEndDt": {
+																				"type": "string"
+																			},
+																			"isTimeAnnounced": {
+																				"type": "boolean"
+																			},
+																			"stateTitle": {
+																				"type": "string"
+																			}
+																		}
+																	},
+																	"matchScore": {
+																		"type": "object",
+																		"properties": {
+																			"team1Score": {
+																				"type": "object",
+																				"properties": {
+																					"inngs1": {
+																						"type": "object",
+																						"properties": {
+																							"inningsId": {
+																								"type": "integer"
+																							},
+																							"runs": {
+																								"type": "integer"
+																							},
+																							"wickets": {
+																								"type": "integer"
+																							},
+																							"overs": {
+																								"type": "number"
+																							}
+																						}
+																					}
+																				}
+																			},
+																			"team2Score": {
+																				"type": "object",
+																				"properties": {
+																					"inngs1": {
+																						"type": "object",
+																						"properties": {
+																							"inningsId": {
+																								"type": "integer"
+																							},
+																							"runs": {
+																								"type": "integer"
+																							},
+																							"wickets": {
+																								"type": "integer"
+																							},
+																							"overs": {
+																								"type": "number"
+																							}
+																						}
+																					}
+																				}
+																			}
+																		}
+																	}
+																}
+															}
+														}
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						},
+						"filters": {
+							"type": "object",
+							"properties": {
+								"matchType": {
+									"type": "array",
+									"items": {
+										"type": "string"
+									}
+								}
+							}
+						},
+						"appIndex": {
+							"type": "object",
+							"properties": {
+								"seoTitle": {
+									"type": "string"
+								},
+								"webURL": {
+									"type": "string"
+								}
+							}
+						},
+						"responseLastUpdated": {
+							"type": "string"
+						}
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LiveScoreHTTP')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/LiveScoreSink')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureDataLakeStorage2",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Json",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "rawlivescore.json",
+						"folderPath": "cricbuzz-raw-data",
+						"fileSystem": "cricbuzz-cricket-container"
+					}
+				},
+				"schema": {
+					"type": "object",
+					"properties": {
+						"typeMatches": {
+							"type": "array",
+							"items": {
+								"type": "object",
+								"properties": {
+									"matchType": {
+										"type": "string"
+									},
+									"seriesMatches": {
+										"type": "array",
+										"items": {
+											"type": "object",
+											"properties": {
+												"seriesAdWrapper": {
+													"type": "object",
+													"properties": {
+														"seriesId": {
+															"type": "integer"
+														},
+														"seriesName": {
+															"type": "string"
+														},
+														"matches": {
+															"type": "array",
+															"items": {
+																"type": "object",
+																"properties": {
+																	"matchInfo": {
+																		"type": "object",
+																		"properties": {
+																			"matchId": {
+																				"type": "integer"
+																			},
+																			"seriesId": {
+																				"type": "integer"
+																			},
+																			"seriesName": {
+																				"type": "string"
+																			},
+																			"matchDesc": {
+																				"type": "string"
+																			},
+																			"matchFormat": {
+																				"type": "string"
+																			},
+																			"startDate": {
+																				"type": "string"
+																			},
+																			"endDate": {
+																				"type": "string"
+																			},
+																			"state": {
+																				"type": "string"
+																			},
+																			"status": {
+																				"type": "string"
+																			},
+																			"team1": {
+																				"type": "object",
+																				"properties": {
+																					"teamId": {
+																						"type": "integer"
+																					},
+																					"teamName": {
+																						"type": "string"
+																					},
+																					"teamSName": {
+																						"type": "string"
+																					},
+																					"imageId": {
+																						"type": "integer"
+																					}
+																				}
+																			},
+																			"team2": {
+																				"type": "object",
+																				"properties": {
+																					"teamId": {
+																						"type": "integer"
+																					},
+																					"teamName": {
+																						"type": "string"
+																					},
+																					"teamSName": {
+																						"type": "string"
+																					},
+																					"imageId": {
+																						"type": "integer"
+																					}
+																				}
+																			},
+																			"venueInfo": {
+																				"type": "object",
+																				"properties": {
+																					"id": {
+																						"type": "integer"
+																					},
+																					"ground": {
+																						"type": "string"
+																					},
+																					"city": {
+																						"type": "string"
+																					},
+																					"timezone": {
+																						"type": "string"
+																					},
+																					"latitude": {
+																						"type": "string"
+																					},
+																					"longitude": {
+																						"type": "string"
+																					}
+																				}
+																			},
+																			"currBatTeamId": {
+																				"type": "integer"
+																			},
+																			"seriesStartDt": {
+																				"type": "string"
+																			},
+																			"seriesEndDt": {
+																				"type": "string"
+																			},
+																			"isTimeAnnounced": {
+																				"type": "boolean"
+																			},
+																			"stateTitle": {
+																				"type": "string"
+																			}
+																		}
+																	},
+																	"matchScore": {
+																		"type": "object",
+																		"properties": {
+																			"team1Score": {
+																				"type": "object",
+																				"properties": {
+																					"inngs1": {
+																						"type": "object",
+																						"properties": {
+																							"inningsId": {
+																								"type": "integer"
+																							},
+																							"runs": {
+																								"type": "integer"
+																							},
+																							"wickets": {
+																								"type": "integer"
+																							},
+																							"overs": {
+																								"type": "number"
+																							}
+																						}
+																					}
+																				}
+																			},
+																			"team2Score": {
+																				"type": "object",
+																				"properties": {
+																					"inngs1": {
+																						"type": "object",
+																						"properties": {
+																							"inningsId": {
+																								"type": "integer"
+																							},
+																							"runs": {
+																								"type": "integer"
+																							},
+																							"wickets": {
+																								"type": "integer"
+																							},
+																							"overs": {
+																								"type": "number"
+																							}
+																						}
+																					}
+																				}
+																			}
+																		}
+																	}
+																}
+															}
+														}
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						},
+						"filters": {
+							"type": "object",
+							"properties": {
+								"matchType": {
+									"type": "array",
+									"items": {
+										"type": "string"
+									}
+								}
+							}
+						},
+						"appIndex": {
+							"type": "object",
+							"properties": {
+								"seoTitle": {
+									"type": "string"
+								},
+								"webURL": {
+									"type": "string"
+								}
+							}
+						},
+						"responseLastUpdated": {
+							"type": "string"
+						}
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureDataLakeStorage2')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ODIAllroundersRankingsHTTP')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "ODIAllrounderRankingsHTTP",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Json",
+				"typeProperties": {
+					"location": {
+						"type": "HttpServerLocation",
+						"relativeUrl": "/stats/v1/rankings/allrounders?formatType=odi"
+					}
+				},
+				"schema": {}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/ODIAllrounderRankingsHTTP')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ODIAllroundersRankingsSink')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureDataLakeStorage2",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Json",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "ODIAllroundersRankings.json",
+						"folderPath": "cricbuzz-raw-data",
+						"fileSystem": "cricbuzz-cricket-container"
+					}
+				},
+				"schema": {
+					"type": "object",
+					"properties": {
+						"rank": {
+							"type": "array",
+							"items": {
+								"type": "object",
+								"properties": {
+									"id": {
+										"type": "string"
+									},
+									"rank": {
+										"type": "string"
+									},
+									"name": {
+										"type": "string"
+									},
+									"country": {
+										"type": "string"
+									},
+									"rating": {
+										"type": "string"
+									},
+									"points": {
+										"type": "string"
+									},
+									"lastUpdatedOn": {
+										"type": "string"
+									},
+									"trend": {
+										"type": "string"
+									},
+									"faceImageId": {
+										"type": "string"
+									},
+									"countryId": {
+										"type": "string"
+									}
+								}
+							}
+						},
+						"appIndex": {
+							"type": "object",
+							"properties": {
+								"seoTitle": {
+									"type": "string"
+								},
+								"webURL": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureDataLakeStorage2')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ODIBatsmanRankingsHTTP')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "ODIRankingsHTTP",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Json",
+				"typeProperties": {
+					"location": {
+						"type": "HttpServerLocation",
+						"relativeUrl": "/stats/v1/rankings/batsmen?formatType=odi"
+					}
+				},
+				"schema": {}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/ODIRankingsHTTP')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ODIBowlersRankingsSink')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureDataLakeStorage2",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Json",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "ODIBowlerRankings.json",
+						"folderPath": "cricbuzz-raw-data",
+						"fileSystem": "cricbuzz-cricket-container"
+					}
+				},
+				"schema": {
+					"type": "object",
+					"properties": {
+						"rank": {
+							"type": "array",
+							"items": {
+								"type": "object",
+								"properties": {
+									"id": {
+										"type": "string"
+									},
+									"rank": {
+										"type": "string"
+									},
+									"name": {
+										"type": "string"
+									},
+									"country": {
+										"type": "string"
+									},
+									"rating": {
+										"type": "string"
+									},
+									"points": {
+										"type": "string"
+									},
+									"lastUpdatedOn": {
+										"type": "string"
+									},
+									"trend": {
+										"type": "string"
+									},
+									"faceImageId": {
+										"type": "string"
+									},
+									"countryId": {
+										"type": "string"
+									},
+									"avg": {
+										"type": "string"
+									}
+								}
+							}
+						},
+						"appIndex": {
+							"type": "object",
+							"properties": {
+								"seoTitle": {
+									"type": "string"
+								},
+								"webURL": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureDataLakeStorage2')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ODIBowlingRankingsHTTP')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "ODIBowlingRankingHTTP",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Json",
+				"typeProperties": {
+					"location": {
+						"type": "HttpServerLocation",
+						"relativeUrl": "/stats/v1/rankings/bowlers?formatType=odi"
+					}
+				},
+				"schema": {
+					"type": "object",
+					"properties": {
+						"rank": {
+							"type": "array",
+							"items": {
+								"type": "object",
+								"properties": {
+									"id": {
+										"type": "string"
+									},
+									"rank": {
+										"type": "string"
+									},
+									"name": {
+										"type": "string"
+									},
+									"country": {
+										"type": "string"
+									},
+									"rating": {
+										"type": "string"
+									},
+									"points": {
+										"type": "string"
+									},
+									"lastUpdatedOn": {
+										"type": "string"
+									},
+									"trend": {
+										"type": "string"
+									},
+									"faceImageId": {
+										"type": "string"
+									},
+									"countryId": {
+										"type": "string"
+									},
+									"avg": {
+										"type": "string"
+									}
+								}
+							}
+						},
+						"appIndex": {
+							"type": "object",
+							"properties": {
+								"seoTitle": {
+									"type": "string"
+								},
+								"webURL": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/ODIBowlingRankingHTTP')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ODIRankingsSink')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureDataLakeStorage2",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Json",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "ODIBatsmanRankings.json",
+						"folderPath": "cricbuzz-raw-data",
+						"fileSystem": "cricbuzz-cricket-container"
+					}
+				},
+				"schema": {
+					"type": "object",
+					"properties": {
+						"rank": {
+							"type": "array",
+							"items": {
+								"type": "object",
+								"properties": {
+									"id": {
+										"type": "string"
+									},
+									"rank": {
+										"type": "string"
+									},
+									"name": {
+										"type": "string"
+									},
+									"country": {
+										"type": "string"
+									},
+									"rating": {
+										"type": "string"
+									},
+									"points": {
+										"type": "string"
+									},
+									"lastUpdatedOn": {
+										"type": "string"
+									},
+									"trend": {
+										"type": "string"
+									},
+									"faceImageId": {
+										"type": "string"
+									},
+									"countryId": {
+										"type": "string"
+									},
+									"avg": {
+										"type": "string"
+									}
+								}
+							}
+						},
+						"appIndex": {
+							"type": "object",
+							"properties": {
+								"seoTitle": {
+									"type": "string"
+								},
+								"webURL": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureDataLakeStorage2')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ODITeamsRankingsHTTP')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "ODITeamsRankings",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Json",
+				"typeProperties": {
+					"location": {
+						"type": "HttpServerLocation",
+						"relativeUrl": "/stats/v1/rankings/teams?formatType=odi"
+					}
+				},
+				"schema": {}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/ODITeamsRankings')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ODITeamsRankingsSink')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureDataLakeStorage2",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Json",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "ODITeamsRankings.json",
+						"folderPath": "cricbuzz-raw-data",
+						"fileSystem": "cricbuzz-cricket-container"
+					}
+				},
+				"schema": {
+					"type": "object",
+					"properties": {
+						"rank": {
+							"type": "array",
+							"items": {
+								"type": "object",
+								"properties": {
+									"id": {
+										"type": "string"
+									},
+									"rank": {
+										"type": "string"
+									},
+									"name": {
+										"type": "string"
+									},
+									"rating": {
+										"type": "string"
+									},
+									"matches": {
+										"type": "string"
+									},
+									"points": {
+										"type": "string"
+									},
+									"lastUpdatedOn": {
+										"type": "string"
+									},
+									"imageId": {
+										"type": "string"
+									}
+								}
+							}
+						},
+						"appIndex": {
+							"type": "object",
+							"properties": {
+								"seoTitle": {
+									"type": "string"
+								},
+								"webURL": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureDataLakeStorage2')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/RecentMatches')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureDataLakeStorage2",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"folderPath": "cricbuzz-transformed-data",
+						"fileSystem": "cricbuzz-cricket-container"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureDataLakeStorage2')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/RecentMatchesHTTP')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "RecentMatchesHTTP",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Json",
+				"typeProperties": {
+					"location": {
+						"type": "HttpServerLocation",
+						"relativeUrl": "/matches/v1/recent"
+					}
+				},
+				"schema": {
+					"type": "object",
+					"properties": {
+						"typeMatches": {
+							"type": "array",
+							"items": {
+								"type": "object",
+								"properties": {
+									"matchType": {
+										"type": "string"
+									},
+									"seriesMatches": {
+										"type": "array",
+										"items": {
+											"type": "object",
+											"properties": {
+												"seriesAdWrapper": {
+													"type": "object",
+													"properties": {
+														"seriesId": {
+															"type": "integer"
+														},
+														"seriesName": {
+															"type": "string"
+														},
+														"matches": {
+															"type": "array",
+															"items": {
+																"type": "object",
+																"properties": {
+																	"matchInfo": {
+																		"type": "object",
+																		"properties": {
+																			"matchId": {
+																				"type": "integer"
+																			},
+																			"seriesId": {
+																				"type": "integer"
+																			},
+																			"seriesName": {
+																				"type": "string"
+																			},
+																			"matchDesc": {
+																				"type": "string"
+																			},
+																			"matchFormat": {
+																				"type": "string"
+																			},
+																			"startDate": {
+																				"type": "string"
+																			},
+																			"endDate": {
+																				"type": "string"
+																			},
+																			"state": {
+																				"type": "string"
+																			},
+																			"status": {
+																				"type": "string"
+																			},
+																			"team1": {
+																				"type": "object",
+																				"properties": {
+																					"teamId": {
+																						"type": "integer"
+																					},
+																					"teamName": {
+																						"type": "string"
+																					},
+																					"teamSName": {
+																						"type": "string"
+																					},
+																					"imageId": {
+																						"type": "integer"
+																					}
+																				}
+																			},
+																			"team2": {
+																				"type": "object",
+																				"properties": {
+																					"teamId": {
+																						"type": "integer"
+																					},
+																					"teamName": {
+																						"type": "string"
+																					},
+																					"teamSName": {
+																						"type": "string"
+																					},
+																					"imageId": {
+																						"type": "integer"
+																					}
+																				}
+																			},
+																			"venueInfo": {
+																				"type": "object",
+																				"properties": {
+																					"id": {
+																						"type": "integer"
+																					},
+																					"ground": {
+																						"type": "string"
+																					},
+																					"city": {
+																						"type": "string"
+																					},
+																					"timezone": {
+																						"type": "string"
+																					},
+																					"latitude": {
+																						"type": "string"
+																					},
+																					"longitude": {
+																						"type": "string"
+																					}
+																				}
+																			},
+																			"currBatTeamId": {
+																				"type": "integer"
+																			},
+																			"seriesStartDt": {
+																				"type": "string"
+																			},
+																			"seriesEndDt": {
+																				"type": "string"
+																			},
+																			"isTimeAnnounced": {
+																				"type": "boolean"
+																			},
+																			"stateTitle": {
+																				"type": "string"
+																			}
+																		}
+																	},
+																	"matchScore": {
+																		"type": "object",
+																		"properties": {
+																			"team1Score": {
+																				"type": "object",
+																				"properties": {
+																					"inngs1": {
+																						"type": "object",
+																						"properties": {
+																							"inningsId": {
+																								"type": "integer"
+																							},
+																							"runs": {
+																								"type": "integer"
+																							},
+																							"wickets": {
+																								"type": "integer"
+																							},
+																							"overs": {
+																								"type": "number"
+																							}
+																						}
+																					},
+																					"inngs2": {
+																						"type": "object",
+																						"properties": {
+																							"inningsId": {
+																								"type": "integer"
+																							},
+																							"runs": {
+																								"type": "integer"
+																							},
+																							"wickets": {
+																								"type": "integer"
+																							},
+																							"overs": {
+																								"type": "number"
+																							}
+																						}
+																					}
+																				}
+																			},
+																			"team2Score": {
+																				"type": "object",
+																				"properties": {
+																					"inngs1": {
+																						"type": "object",
+																						"properties": {
+																							"inningsId": {
+																								"type": "integer"
+																							},
+																							"runs": {
+																								"type": "integer"
+																							},
+																							"wickets": {
+																								"type": "integer"
+																							},
+																							"overs": {
+																								"type": "number"
+																							}
+																						}
+																					},
+																					"inngs2": {
+																						"type": "object",
+																						"properties": {
+																							"inningsId": {
+																								"type": "integer"
+																							},
+																							"runs": {
+																								"type": "integer"
+																							},
+																							"wickets": {
+																								"type": "integer"
+																							},
+																							"overs": {
+																								"type": "number"
+																							}
+																						}
+																					}
+																				}
+																			}
+																		}
+																	}
+																}
+															}
+														}
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						},
+						"filters": {
+							"type": "object",
+							"properties": {
+								"matchType": {
+									"type": "array",
+									"items": {
+										"type": "string"
+									}
+								}
+							}
+						},
+						"appIndex": {
+							"type": "object",
+							"properties": {
+								"seoTitle": {
+									"type": "string"
+								},
+								"webURL": {
+									"type": "string"
+								}
+							}
+						},
+						"responseLastUpdated": {
+							"type": "string"
+						}
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/RecentMatchesHTTP')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/RecentMatchesSink')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureDataLakeStorage2",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Json",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "rawrecentmatches.json",
+						"folderPath": "cricbuzz-raw-data",
+						"fileSystem": "cricbuzz-cricket-container"
+					}
+				},
+				"schema": {
+					"type": "object",
+					"properties": {
+						"typeMatches": {
+							"type": "array",
+							"items": {
+								"type": "object",
+								"properties": {
+									"matchType": {
+										"type": "string"
+									},
+									"seriesMatches": {
+										"type": "array",
+										"items": {
+											"type": "object",
+											"properties": {
+												"seriesAdWrapper": {
+													"type": "object",
+													"properties": {
+														"seriesId": {
+															"type": "integer"
+														},
+														"seriesName": {
+															"type": "string"
+														},
+														"matches": {
+															"type": "array",
+															"items": {
+																"type": "object",
+																"properties": {
+																	"matchInfo": {
+																		"type": "object",
+																		"properties": {
+																			"matchId": {
+																				"type": "integer"
+																			},
+																			"seriesId": {
+																				"type": "integer"
+																			},
+																			"seriesName": {
+																				"type": "string"
+																			},
+																			"matchDesc": {
+																				"type": "string"
+																			},
+																			"matchFormat": {
+																				"type": "string"
+																			},
+																			"startDate": {
+																				"type": "string"
+																			},
+																			"endDate": {
+																				"type": "string"
+																			},
+																			"state": {
+																				"type": "string"
+																			},
+																			"status": {
+																				"type": "string"
+																			},
+																			"team1": {
+																				"type": "object",
+																				"properties": {
+																					"teamId": {
+																						"type": "integer"
+																					},
+																					"teamName": {
+																						"type": "string"
+																					},
+																					"teamSName": {
+																						"type": "string"
+																					},
+																					"imageId": {
+																						"type": "integer"
+																					}
+																				}
+																			},
+																			"team2": {
+																				"type": "object",
+																				"properties": {
+																					"teamId": {
+																						"type": "integer"
+																					},
+																					"teamName": {
+																						"type": "string"
+																					},
+																					"teamSName": {
+																						"type": "string"
+																					},
+																					"imageId": {
+																						"type": "integer"
+																					}
+																				}
+																			},
+																			"venueInfo": {
+																				"type": "object",
+																				"properties": {
+																					"id": {
+																						"type": "integer"
+																					},
+																					"ground": {
+																						"type": "string"
+																					},
+																					"city": {
+																						"type": "string"
+																					},
+																					"timezone": {
+																						"type": "string"
+																					},
+																					"latitude": {
+																						"type": "string"
+																					},
+																					"longitude": {
+																						"type": "string"
+																					}
+																				}
+																			},
+																			"currBatTeamId": {
+																				"type": "integer"
+																			},
+																			"seriesStartDt": {
+																				"type": "string"
+																			},
+																			"seriesEndDt": {
+																				"type": "string"
+																			},
+																			"isTimeAnnounced": {
+																				"type": "boolean"
+																			},
+																			"stateTitle": {
+																				"type": "string"
+																			}
+																		}
+																	},
+																	"matchScore": {
+																		"type": "object",
+																		"properties": {
+																			"team1Score": {
+																				"type": "object",
+																				"properties": {
+																					"inngs1": {
+																						"type": "object",
+																						"properties": {
+																							"inningsId": {
+																								"type": "integer"
+																							},
+																							"runs": {
+																								"type": "integer"
+																							},
+																							"wickets": {
+																								"type": "integer"
+																							},
+																							"overs": {
+																								"type": "number"
+																							}
+																						}
+																					},
+																					"inngs2": {
+																						"type": "object",
+																						"properties": {
+																							"inningsId": {
+																								"type": "integer"
+																							},
+																							"runs": {
+																								"type": "integer"
+																							},
+																							"wickets": {
+																								"type": "integer"
+																							},
+																							"overs": {
+																								"type": "number"
+																							}
+																						}
+																					}
+																				}
+																			},
+																			"team2Score": {
+																				"type": "object",
+																				"properties": {
+																					"inngs1": {
+																						"type": "object",
+																						"properties": {
+																							"inningsId": {
+																								"type": "integer"
+																							},
+																							"runs": {
+																								"type": "integer"
+																							},
+																							"wickets": {
+																								"type": "integer"
+																							},
+																							"overs": {
+																								"type": "number"
+																							}
+																						}
+																					},
+																					"inngs2": {
+																						"type": "object",
+																						"properties": {
+																							"inningsId": {
+																								"type": "integer"
+																							},
+																							"runs": {
+																								"type": "integer"
+																							},
+																							"wickets": {
+																								"type": "integer"
+																							},
+																							"overs": {
+																								"type": "number"
+																							}
+																						}
+																					}
+																				}
+																			}
+																		}
+																	}
+																}
+															}
+														}
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						},
+						"filters": {
+							"type": "object",
+							"properties": {
+								"matchType": {
+									"type": "array",
+									"items": {
+										"type": "string"
+									}
+								}
+							}
+						},
+						"appIndex": {
+							"type": "object",
+							"properties": {
+								"seoTitle": {
+									"type": "string"
+								},
+								"webURL": {
+									"type": "string"
+								}
+							}
+						},
+						"responseLastUpdated": {
+							"type": "string"
+						}
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureDataLakeStorage2')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/T20AllroundersRankings')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "T20AllroundersRankingsHTTP",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Json",
+				"typeProperties": {
+					"location": {
+						"type": "HttpServerLocation",
+						"relativeUrl": "/stats/v1/rankings/allrounders?formatType=t20"
+					}
+				},
+				"schema": {}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/T20AllroundersRankingsHTTP')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/T20AllroundersRankingsSink')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureDataLakeStorage2",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Json",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "T20AllroundersRankings.json",
+						"folderPath": "cricbuzz-raw-data",
+						"fileSystem": "cricbuzz-cricket-container"
+					}
+				},
+				"schema": {
+					"type": "object",
+					"properties": {
+						"rank": {
+							"type": "array",
+							"items": {
+								"type": "object",
+								"properties": {
+									"id": {
+										"type": "string"
+									},
+									"rank": {
+										"type": "string"
+									},
+									"name": {
+										"type": "string"
+									},
+									"country": {
+										"type": "string"
+									},
+									"rating": {
+										"type": "string"
+									},
+									"points": {
+										"type": "string"
+									},
+									"lastUpdatedOn": {
+										"type": "string"
+									},
+									"trend": {
+										"type": "string"
+									},
+									"faceImageId": {
+										"type": "string"
+									},
+									"countryId": {
+										"type": "string"
+									}
+								}
+							}
+						},
+						"appIndex": {
+							"type": "object",
+							"properties": {
+								"seoTitle": {
+									"type": "string"
+								},
+								"webURL": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureDataLakeStorage2')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/T20BatsmanRankingsHTTP')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "ODIRankingsHTTP",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Json",
+				"typeProperties": {
+					"location": {
+						"type": "HttpServerLocation",
+						"relativeUrl": "/stats/v1/rankings/batsmen?formatType=t20"
+					}
+				},
+				"schema": {}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/ODIRankingsHTTP')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/T20BatsmanRankingsSink')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureDataLakeStorage2",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Json",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "T20BatsmanRankings.json",
+						"folderPath": "cricbuzz-raw-data",
+						"fileSystem": "cricbuzz-cricket-container"
+					}
+				},
+				"schema": {
+					"type": "object",
+					"properties": {
+						"rank": {
+							"type": "array",
+							"items": {
+								"type": "object",
+								"properties": {
+									"id": {
+										"type": "string"
+									},
+									"rank": {
+										"type": "string"
+									},
+									"name": {
+										"type": "string"
+									},
+									"country": {
+										"type": "string"
+									},
+									"rating": {
+										"type": "string"
+									},
+									"points": {
+										"type": "string"
+									},
+									"lastUpdatedOn": {
+										"type": "string"
+									},
+									"trend": {
+										"type": "string"
+									},
+									"faceImageId": {
+										"type": "string"
+									},
+									"countryId": {
+										"type": "string"
+									},
+									"avg": {
+										"type": "string"
+									}
+								}
+							}
+						},
+						"appIndex": {
+							"type": "object",
+							"properties": {
+								"seoTitle": {
+									"type": "string"
+								},
+								"webURL": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureDataLakeStorage2')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/T20BowlerRankingsSink')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureDataLakeStorage2",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Json",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "T20BowlerRankings.json",
+						"folderPath": "cricbuzz-raw-data",
+						"fileSystem": "cricbuzz-cricket-container"
+					}
+				},
+				"schema": {
+					"type": "object",
+					"properties": {
+						"rank": {
+							"type": "array",
+							"items": {
+								"type": "object",
+								"properties": {
+									"id": {
+										"type": "string"
+									},
+									"rank": {
+										"type": "string"
+									},
+									"name": {
+										"type": "string"
+									},
+									"country": {
+										"type": "string"
+									},
+									"rating": {
+										"type": "string"
+									},
+									"points": {
+										"type": "string"
+									},
+									"lastUpdatedOn": {
+										"type": "string"
+									},
+									"trend": {
+										"type": "string"
+									},
+									"faceImageId": {
+										"type": "string"
+									},
+									"countryId": {
+										"type": "string"
+									},
+									"avg": {
+										"type": "string"
+									}
+								}
+							}
+						},
+						"appIndex": {
+							"type": "object",
+							"properties": {
+								"seoTitle": {
+									"type": "string"
+								},
+								"webURL": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureDataLakeStorage2')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/T20BowlingRankingsHTTP')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "T20BowlingRankingsHTTP",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Json",
+				"typeProperties": {
+					"location": {
+						"type": "HttpServerLocation",
+						"relativeUrl": "/stats/v1/rankings/bowlers?formatType=t20"
+					}
+				},
+				"schema": {
+					"type": "object",
+					"properties": {
+						"rank": {
+							"type": "array",
+							"items": {
+								"type": "object",
+								"properties": {
+									"id": {
+										"type": "string"
+									},
+									"rank": {
+										"type": "string"
+									},
+									"name": {
+										"type": "string"
+									},
+									"country": {
+										"type": "string"
+									},
+									"rating": {
+										"type": "string"
+									},
+									"points": {
+										"type": "string"
+									},
+									"lastUpdatedOn": {
+										"type": "string"
+									},
+									"trend": {
+										"type": "string"
+									},
+									"faceImageId": {
+										"type": "string"
+									},
+									"countryId": {
+										"type": "string"
+									},
+									"avg": {
+										"type": "string"
+									}
+								}
+							}
+						},
+						"appIndex": {
+							"type": "object",
+							"properties": {
+								"seoTitle": {
+									"type": "string"
+								},
+								"webURL": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/T20BowlingRankingsHTTP')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/T20TeamsRankingsHTTP')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "T20TeamsRankingsHTTP",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Json",
+				"typeProperties": {
+					"location": {
+						"type": "HttpServerLocation",
+						"relativeUrl": "/stats/v1/rankings/teams?formatType=t20"
+					}
+				},
+				"schema": {}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/T20TeamsRankingsHTTP')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/T20TeamsRankingsSink')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureDataLakeStorage2",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Json",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "T20TeamsRankings.json",
+						"folderPath": "cricbuzz-raw-data",
+						"fileSystem": "cricbuzz-cricket-container"
+					}
+				},
+				"schema": {
+					"type": "object",
+					"properties": {
+						"rank": {
+							"type": "array",
+							"items": {
+								"type": "object",
+								"properties": {
+									"id": {
+										"type": "string"
+									},
+									"rank": {
+										"type": "string"
+									},
+									"name": {
+										"type": "string"
+									},
+									"rating": {
+										"type": "string"
+									},
+									"matches": {
+										"type": "string"
+									},
+									"points": {
+										"type": "string"
+									},
+									"lastUpdatedOn": {
+										"type": "string"
+									},
+									"imageId": {
+										"type": "string"
+									}
+								}
+							}
+						},
+						"appIndex": {
+							"type": "object",
+							"properties": {
+								"seoTitle": {
+									"type": "string"
+								},
+								"webURL": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureDataLakeStorage2')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/TestAllroundersRankingsHTTP')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "TestAllroundersRankings HTTP",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Json",
+				"typeProperties": {
+					"location": {
+						"type": "HttpServerLocation",
+						"relativeUrl": "/stats/v1/rankings/allrounders?formatType=test"
+					}
+				},
+				"schema": {}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/TestAllroundersRankings HTTP')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/TestAllroundersRankingsSink')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureDataLakeStorage2",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Json",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "TestAllroundersRankings.json",
+						"folderPath": "cricbuzz-raw-data",
+						"fileSystem": "cricbuzz-cricket-container"
+					}
+				},
+				"schema": {
+					"type": "object",
+					"properties": {
+						"rank": {
+							"type": "array",
+							"items": {
+								"type": "object",
+								"properties": {
+									"id": {
+										"type": "string"
+									},
+									"rank": {
+										"type": "string"
+									},
+									"name": {
+										"type": "string"
+									},
+									"country": {
+										"type": "string"
+									},
+									"rating": {
+										"type": "string"
+									},
+									"points": {
+										"type": "string"
+									},
+									"lastUpdatedOn": {
+										"type": "string"
+									},
+									"trend": {
+										"type": "string"
+									},
+									"faceImageId": {
+										"type": "string"
+									},
+									"countryId": {
+										"type": "string"
+									}
+								}
+							}
+						},
+						"appIndex": {
+							"type": "object",
+							"properties": {
+								"seoTitle": {
+									"type": "string"
+								},
+								"webURL": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureDataLakeStorage2')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/TestBatsmanRankingHTTP')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "ODIRankingsHTTP",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Json",
+				"typeProperties": {
+					"location": {
+						"type": "HttpServerLocation",
+						"relativeUrl": "/stats/v1/rankings/batsmen?formatType=test"
+					}
+				},
+				"schema": {}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/ODIRankingsHTTP')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/TestBatsmanRankingSink')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureDataLakeStorage2",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Json",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "TestBatsmanRankings.json",
+						"folderPath": "cricbuzz-raw-data",
+						"fileSystem": "cricbuzz-cricket-container"
+					}
+				},
+				"schema": {
+					"type": "object",
+					"properties": {
+						"rank": {
+							"type": "array",
+							"items": {
+								"type": "object",
+								"properties": {
+									"id": {
+										"type": "string"
+									},
+									"rank": {
+										"type": "string"
+									},
+									"name": {
+										"type": "string"
+									},
+									"country": {
+										"type": "string"
+									},
+									"rating": {
+										"type": "string"
+									},
+									"points": {
+										"type": "string"
+									},
+									"lastUpdatedOn": {
+										"type": "string"
+									},
+									"trend": {
+										"type": "string"
+									},
+									"faceImageId": {
+										"type": "string"
+									},
+									"countryId": {
+										"type": "string"
+									},
+									"avg": {
+										"type": "string"
+									}
+								}
+							}
+						},
+						"appIndex": {
+							"type": "object",
+							"properties": {
+								"seoTitle": {
+									"type": "string"
+								},
+								"webURL": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureDataLakeStorage2')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/TestBowlersRankingsSink')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureDataLakeStorage2",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Json",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "TestBowlerRankings.json",
+						"folderPath": "cricbuzz-raw-data",
+						"fileSystem": "cricbuzz-cricket-container"
+					}
+				},
+				"schema": {
+					"type": "object",
+					"properties": {
+						"rank": {
+							"type": "array",
+							"items": {
+								"type": "object",
+								"properties": {
+									"id": {
+										"type": "string"
+									},
+									"rank": {
+										"type": "string"
+									},
+									"name": {
+										"type": "string"
+									},
+									"country": {
+										"type": "string"
+									},
+									"rating": {
+										"type": "string"
+									},
+									"points": {
+										"type": "string"
+									},
+									"lastUpdatedOn": {
+										"type": "string"
+									},
+									"trend": {
+										"type": "string"
+									},
+									"faceImageId": {
+										"type": "string"
+									},
+									"countryId": {
+										"type": "string"
+									},
+									"avg": {
+										"type": "string"
+									}
+								}
+							}
+						},
+						"appIndex": {
+							"type": "object",
+							"properties": {
+								"seoTitle": {
+									"type": "string"
+								},
+								"webURL": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureDataLakeStorage2')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/TestBowlingRankingsHTTP')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "HttpServer1",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Json",
+				"typeProperties": {
+					"location": {
+						"type": "HttpServerLocation",
+						"relativeUrl": "/stats/v1/rankings/bowlers?formatType=test"
+					}
+				},
+				"schema": {
+					"type": "object",
+					"properties": {
+						"rank": {
+							"type": "array",
+							"items": {
+								"type": "object",
+								"properties": {
+									"id": {
+										"type": "string"
+									},
+									"rank": {
+										"type": "string"
+									},
+									"name": {
+										"type": "string"
+									},
+									"country": {
+										"type": "string"
+									},
+									"rating": {
+										"type": "string"
+									},
+									"points": {
+										"type": "string"
+									},
+									"lastUpdatedOn": {
+										"type": "string"
+									},
+									"trend": {
+										"type": "string"
+									},
+									"faceImageId": {
+										"type": "string"
+									},
+									"countryId": {
+										"type": "string"
+									},
+									"avg": {
+										"type": "string"
+									}
+								}
+							}
+						},
+						"appIndex": {
+							"type": "object",
+							"properties": {
+								"seoTitle": {
+									"type": "string"
+								},
+								"webURL": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/HttpServer1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/TestTeamsRankingsHTTP')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "TestTeamsRankingsHTTP",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Json",
+				"typeProperties": {
+					"location": {
+						"type": "HttpServerLocation",
+						"relativeUrl": "/stats/v1/rankings/teams?formatType=test"
+					}
+				},
+				"schema": {}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/TestTeamsRankingsHTTP')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/TestTeamsRankingsSink')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureDataLakeStorage2",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Json",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "TestTeamsRankings.json",
+						"folderPath": "cricbuzz-raw-data",
+						"fileSystem": "cricbuzz-cricket-container"
+					}
+				},
+				"schema": {
+					"type": "object",
+					"properties": {
+						"rank": {
+							"type": "array",
+							"items": {
+								"type": "object",
+								"properties": {
+									"id": {
+										"type": "string"
+									},
+									"rank": {
+										"type": "string"
+									},
+									"name": {
+										"type": "string"
+									},
+									"rating": {
+										"type": "string"
+									},
+									"matches": {
+										"type": "string"
+									},
+									"points": {
+										"type": "string"
+									},
+									"lastUpdatedOn": {
+										"type": "string"
+									},
+									"imageId": {
+										"type": "string"
+									}
+								}
+							}
+						},
+						"appIndex": {
+							"type": "object",
+							"properties": {
+								"seoTitle": {
+									"type": "string"
+								},
+								"webURL": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureDataLakeStorage2')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Transformed_Data')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureDataLakeStorage2",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"folderPath": "cricbuzz-transformed-data",
+						"fileSystem": "cricbuzz-cricket-container"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureDataLakeStorage2')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/UpcomingMatchesHTTP')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "UpcomingMatchesHTTP",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Json",
+				"typeProperties": {
+					"location": {
+						"type": "HttpServerLocation",
+						"relativeUrl": "/matches/v1/upcoming"
+					}
+				},
+				"schema": {
+					"type": "object",
+					"properties": {
+						"typeMatches": {
+							"type": "array",
+							"items": {
+								"type": "object",
+								"properties": {
+									"matchType": {
+										"type": "string"
+									},
+									"seriesMatches": {
+										"type": "array",
+										"items": {
+											"type": "object",
+											"properties": {
+												"seriesAdWrapper": {
+													"type": "object",
+													"properties": {
+														"seriesId": {
+															"type": "integer"
+														},
+														"seriesName": {
+															"type": "string"
+														},
+														"matches": {
+															"type": "array",
+															"items": {
+																"type": "object",
+																"properties": {
+																	"matchInfo": {
+																		"type": "object",
+																		"properties": {
+																			"matchId": {
+																				"type": "integer"
+																			},
+																			"seriesId": {
+																				"type": "integer"
+																			},
+																			"seriesName": {
+																				"type": "string"
+																			},
+																			"matchDesc": {
+																				"type": "string"
+																			},
+																			"matchFormat": {
+																				"type": "string"
+																			},
+																			"startDate": {
+																				"type": "string"
+																			},
+																			"endDate": {
+																				"type": "string"
+																			},
+																			"state": {
+																				"type": "string"
+																			},
+																			"status": {
+																				"type": "string"
+																			},
+																			"team1": {
+																				"type": "object",
+																				"properties": {
+																					"teamId": {
+																						"type": "integer"
+																					},
+																					"teamName": {
+																						"type": "string"
+																					},
+																					"teamSName": {
+																						"type": "string"
+																					},
+																					"imageId": {
+																						"type": "integer"
+																					}
+																				}
+																			},
+																			"team2": {
+																				"type": "object",
+																				"properties": {
+																					"teamId": {
+																						"type": "integer"
+																					},
+																					"teamName": {
+																						"type": "string"
+																					},
+																					"teamSName": {
+																						"type": "string"
+																					},
+																					"imageId": {
+																						"type": "integer"
+																					}
+																				}
+																			},
+																			"venueInfo": {
+																				"type": "object",
+																				"properties": {
+																					"id": {
+																						"type": "integer"
+																					},
+																					"ground": {
+																						"type": "string"
+																					},
+																					"city": {
+																						"type": "string"
+																					},
+																					"timezone": {
+																						"type": "string"
+																					},
+																					"latitude": {
+																						"type": "string"
+																					},
+																					"longitude": {
+																						"type": "string"
+																					}
+																				}
+																			},
+																			"seriesStartDt": {
+																				"type": "string"
+																			},
+																			"seriesEndDt": {
+																				"type": "string"
+																			},
+																			"isTimeAnnounced": {
+																				"type": "boolean"
+																			},
+																			"stateTitle": {
+																				"type": "string"
+																			}
+																		}
+																	}
+																}
+															}
+														}
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						},
+						"filters": {
+							"type": "object",
+							"properties": {
+								"matchType": {
+									"type": "array",
+									"items": {
+										"type": "string"
+									}
+								}
+							}
+						},
+						"appIndex": {
+							"type": "object",
+							"properties": {
+								"seoTitle": {
+									"type": "string"
+								},
+								"webURL": {
+									"type": "string"
+								}
+							}
+						},
+						"responseLastUpdated": {
+							"type": "string"
+						}
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/UpcomingMatchesHTTP')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/UpcomingMatchesSink')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureDataLakeStorage2",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Json",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "rawupcomingmatches.json",
+						"folderPath": "cricbuzz-raw-data",
+						"fileSystem": "cricbuzz-cricket-container"
+					}
+				},
+				"schema": {
+					"type": "object",
+					"properties": {
+						"typeMatches": {
+							"type": "array",
+							"items": {
+								"type": "object",
+								"properties": {
+									"matchType": {
+										"type": "string"
+									},
+									"seriesMatches": {
+										"type": "array",
+										"items": {
+											"type": "object",
+											"properties": {
+												"seriesAdWrapper": {
+													"type": "object",
+													"properties": {
+														"seriesId": {
+															"type": "integer"
+														},
+														"seriesName": {
+															"type": "string"
+														},
+														"matches": {
+															"type": "array",
+															"items": {
+																"type": "object",
+																"properties": {
+																	"matchInfo": {
+																		"type": "object",
+																		"properties": {
+																			"matchId": {
+																				"type": "integer"
+																			},
+																			"seriesId": {
+																				"type": "integer"
+																			},
+																			"seriesName": {
+																				"type": "string"
+																			},
+																			"matchDesc": {
+																				"type": "string"
+																			},
+																			"matchFormat": {
+																				"type": "string"
+																			},
+																			"startDate": {
+																				"type": "string"
+																			},
+																			"endDate": {
+																				"type": "string"
+																			},
+																			"state": {
+																				"type": "string"
+																			},
+																			"status": {
+																				"type": "string"
+																			},
+																			"team1": {
+																				"type": "object",
+																				"properties": {
+																					"teamId": {
+																						"type": "integer"
+																					},
+																					"teamName": {
+																						"type": "string"
+																					},
+																					"teamSName": {
+																						"type": "string"
+																					},
+																					"imageId": {
+																						"type": "integer"
+																					}
+																				}
+																			},
+																			"team2": {
+																				"type": "object",
+																				"properties": {
+																					"teamId": {
+																						"type": "integer"
+																					},
+																					"teamName": {
+																						"type": "string"
+																					},
+																					"teamSName": {
+																						"type": "string"
+																					},
+																					"imageId": {
+																						"type": "integer"
+																					}
+																				}
+																			},
+																			"venueInfo": {
+																				"type": "object",
+																				"properties": {
+																					"id": {
+																						"type": "integer"
+																					},
+																					"ground": {
+																						"type": "string"
+																					},
+																					"city": {
+																						"type": "string"
+																					},
+																					"timezone": {
+																						"type": "string"
+																					},
+																					"latitude": {
+																						"type": "string"
+																					},
+																					"longitude": {
+																						"type": "string"
+																					}
+																				}
+																			},
+																			"seriesStartDt": {
+																				"type": "string"
+																			},
+																			"seriesEndDt": {
+																				"type": "string"
+																			},
+																			"isTimeAnnounced": {
+																				"type": "boolean"
+																			},
+																			"stateTitle": {
+																				"type": "string"
+																			}
+																		}
+																	}
+																}
+															}
+														}
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						},
+						"filters": {
+							"type": "object",
+							"properties": {
+								"matchType": {
+									"type": "array",
+									"items": {
+										"type": "string"
+									}
+								}
+							}
+						},
+						"appIndex": {
+							"type": "object",
+							"properties": {
+								"seoTitle": {
+									"type": "string"
+								},
+								"webURL": {
+									"type": "string"
+								}
+							}
+						},
+						"responseLastUpdated": {
+							"type": "string"
+						}
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureDataLakeStorage2')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Upcomingmatches')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureDataLakeStorage2",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"folderPath": "cricbuzz-transformed-data",
+						"fileSystem": "cricbuzz-cricket-container"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureDataLakeStorage2')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AzureDataLakeStorage1')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobFS",
+				"typeProperties": {
+					"url": "[parameters('AzureDataLakeStorage1_properties_typeProperties_url')]",
+					"accountKey": {
+						"type": "SecureString",
+						"value": "[parameters('AzureDataLakeStorage1_accountKey')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AzureDataLakeStorage2')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobFS",
+				"typeProperties": {
+					"url": "[parameters('AzureDataLakeStorage2_properties_typeProperties_url')]",
+					"accountKey": {
+						"type": "SecureString",
+						"value": "[parameters('AzureDataLakeStorage2_accountKey')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/BatsmanStatsHTTP')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "HttpServer",
+				"typeProperties": {
+					"url": "[parameters('BatsmanStatsHTTP_properties_typeProperties_url')]",
+					"enableServerCertificateValidation": true,
+					"authenticationType": "Anonymous",
+					"authHeaders": {
+						"X-Rapidapi-Key": {
+							"type": "SecureString",
+							"value": "**********"
+						},
+						"X-Rapidapi-Host": {
+							"type": "SecureString",
+							"value": "**********"
+						}
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/BatsmanStatsRestHTTP')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "RestService",
+				"typeProperties": {
+					"url": "[parameters('BatsmanStatsRestHTTP_properties_typeProperties_url')]",
+					"enableServerCertificateValidation": true,
+					"authenticationType": "Anonymous",
+					"authHeaders": {
+						"X-Rapidapi-Key": {
+							"type": "SecureString",
+							"value": "**********"
+						},
+						"X-Rapidapi-Host": {
+							"type": "SecureString",
+							"value": "**********"
+						}
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/HttpServer1')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "HttpServer",
+				"typeProperties": {
+					"url": "[parameters('HttpServer1_properties_typeProperties_url')]",
+					"enableServerCertificateValidation": true,
+					"authenticationType": "Anonymous",
+					"authHeaders": {
+						"X-Rapidapi-Key": {
+							"type": "SecureString",
+							"value": "**********"
+						},
+						"X-Rapidapi-Host": {
+							"type": "SecureString",
+							"value": "**********"
+						}
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/LiveScoreHTTP')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "HttpServer",
+				"typeProperties": {
+					"url": "[parameters('LiveScoreHTTP_properties_typeProperties_url')]",
+					"enableServerCertificateValidation": true,
+					"authenticationType": "Anonymous",
+					"authHeaders": {
+						"X-Rapidapi-Key": {
+							"type": "SecureString",
+							"value": "**********"
+						},
+						"X-Rapidapi-Host": {
+							"type": "SecureString",
+							"value": "**********"
+						}
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ODIAllrounderRankingsHTTP')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "HttpServer",
+				"typeProperties": {
+					"url": "[parameters('ODIAllrounderRankingsHTTP_properties_typeProperties_url')]",
+					"enableServerCertificateValidation": true,
+					"authenticationType": "Anonymous",
+					"authHeaders": {
+						"X-Rapidapi-Key": {
+							"type": "SecureString",
+							"value": "**********"
+						},
+						"X-Rapidapi-Host": {
+							"type": "SecureString",
+							"value": "**********"
+						}
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ODIBatsmanRankingsCSV')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobFS",
+				"typeProperties": {
+					"url": "[parameters('ODIBatsmanRankingsCSV_properties_typeProperties_url')]",
+					"accountKey": {
+						"type": "SecureString",
+						"value": "[parameters('ODIBatsmanRankingsCSV_accountKey')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ODIBatsmanRankingsTOCSV')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobFS",
+				"typeProperties": {
+					"url": "[parameters('ODIBatsmanRankingsTOCSV_properties_typeProperties_url')]",
+					"accountKey": {
+						"type": "SecureString",
+						"value": "[parameters('ODIBatsmanRankingsTOCSV_accountKey')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ODIBowlingRankingHTTP')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "HttpServer",
+				"typeProperties": {
+					"url": "[parameters('ODIBowlingRankingHTTP_properties_typeProperties_url')]",
+					"enableServerCertificateValidation": true,
+					"authenticationType": "Anonymous",
+					"authHeaders": {
+						"X-Rapidapi-Key": {
+							"type": "SecureString",
+							"value": "**********"
+						},
+						"X-Rapidapi-Host": {
+							"type": "SecureString",
+							"value": "**********"
+						}
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ODIRankingsHTTP')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "HttpServer",
+				"typeProperties": {
+					"url": "[parameters('ODIRankingsHTTP_properties_typeProperties_url')]",
+					"enableServerCertificateValidation": true,
+					"authenticationType": "Anonymous",
+					"authHeaders": {
+						"X-Rapidapi-Key": {
+							"type": "SecureString",
+							"value": "**********"
+						},
+						"X-Rapidapi-Host": {
+							"type": "SecureString",
+							"value": "**********"
+						}
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ODITeamsRankings')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "HttpServer",
+				"typeProperties": {
+					"url": "[parameters('ODITeamsRankings_properties_typeProperties_url')]",
+					"enableServerCertificateValidation": true,
+					"authenticationType": "Anonymous",
+					"authHeaders": {
+						"X-Rapidapi-Key": {
+							"type": "SecureString",
+							"value": "**********"
+						},
+						"X-Rapidapi-Host": {
+							"type": "SecureString",
+							"value": "**********"
+						}
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/RecentMatchesHTTP')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "HttpServer",
+				"typeProperties": {
+					"url": "[parameters('RecentMatchesHTTP_properties_typeProperties_url')]",
+					"enableServerCertificateValidation": true,
+					"authenticationType": "Anonymous",
+					"authHeaders": {
+						"X-Rapidapi-Key": {
+							"type": "SecureString",
+							"value": "**********"
+						},
+						"X-Rapidapi-Host": {
+							"type": "SecureString",
+							"value": "**********"
+						}
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/T20AllroundersRankingsHTTP')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "HttpServer",
+				"typeProperties": {
+					"url": "[parameters('T20AllroundersRankingsHTTP_properties_typeProperties_url')]",
+					"enableServerCertificateValidation": true,
+					"authenticationType": "Anonymous",
+					"authHeaders": {
+						"X-Rapidapi-Key": {
+							"type": "SecureString",
+							"value": "**********"
+						},
+						"X-Rapidapi-Host": {
+							"type": "SecureString",
+							"value": "**********"
+						}
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/T20BowlingRankingsHTTP')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "HttpServer",
+				"typeProperties": {
+					"url": "[parameters('T20BowlingRankingsHTTP_properties_typeProperties_url')]",
+					"enableServerCertificateValidation": true,
+					"authenticationType": "Anonymous",
+					"authHeaders": {
+						"X-Rapidapi-Key": {
+							"type": "SecureString",
+							"value": "**********"
+						},
+						"X-Rapidapi-Host": {
+							"type": "SecureString",
+							"value": "**********"
+						}
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/T20TeamsRankingsHTTP')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "HttpServer",
+				"typeProperties": {
+					"url": "[parameters('T20TeamsRankingsHTTP_properties_typeProperties_url')]",
+					"enableServerCertificateValidation": true,
+					"authenticationType": "Anonymous",
+					"authHeaders": {
+						"X-Rapidapi-Key": {
+							"type": "SecureString",
+							"value": "**********"
+						},
+						"X-Rapidapi-Host": {
+							"type": "SecureString",
+							"value": "**********"
+						}
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/TestAllroundersRankings HTTP')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "HttpServer",
+				"typeProperties": {
+					"url": "[parameters('TestAllroundersRankings HTTP_properties_typeProperties_url')]",
+					"enableServerCertificateValidation": true,
+					"authenticationType": "Anonymous",
+					"authHeaders": {
+						"X-Rapidapi-Key": {
+							"type": "SecureString",
+							"value": "**********"
+						},
+						"X-Rapidapi-Host": {
+							"type": "SecureString",
+							"value": "**********"
+						}
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/TestTeamsRankingsHTTP')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "HttpServer",
+				"typeProperties": {
+					"url": "[parameters('TestTeamsRankingsHTTP_properties_typeProperties_url')]",
+					"enableServerCertificateValidation": true,
+					"authenticationType": "Anonymous",
+					"authHeaders": {
+						"X-Rapidapi-Key": {
+							"type": "SecureString",
+							"value": "**********"
+						},
+						"X-Rapidapi-Host": {
+							"type": "SecureString",
+							"value": "**********"
+						}
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/UpcomingMatchesHTTP')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "HttpServer",
+				"typeProperties": {
+					"url": "[parameters('UpcomingMatchesHTTP_properties_typeProperties_url')]",
+					"enableServerCertificateValidation": true,
+					"authenticationType": "Anonymous",
+					"authHeaders": {
+						"X-Rapidapi-Key": {
+							"type": "SecureString",
+							"value": "**********"
+						},
+						"X-Rapidapi-Host": {
+							"type": "SecureString",
+							"value": "**********"
+						}
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/matches_datails_ingestions_trigger')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Started",
+				"pipelines": [
+					{
+						"pipelineReference": {
+							"referenceName": "matches_details_ingestions",
+							"type": "PipelineReference"
+						},
+						"parameters": {}
+					}
+				],
+				"type": "ScheduleTrigger",
+				"typeProperties": {
+					"recurrence": {
+						"frequency": "Hour",
+						"interval": 2,
+						"startTime": "2024-02-15T21:00:00",
+						"timeZone": "Eastern Standard Time"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/matches_details_ingestions')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/matches_details_transformation_trigger')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Started",
+				"pipelines": [
+					{
+						"pipelineReference": {
+							"referenceName": "matches_details_transformation",
+							"type": "PipelineReference"
+						},
+						"parameters": {}
+					}
+				],
+				"type": "ScheduleTrigger",
+				"typeProperties": {
+					"recurrence": {
+						"frequency": "Hour",
+						"interval": 2,
+						"startTime": "2024-02-15T10:00:00",
+						"timeZone": "Eastern Standard Time"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/matches_details_transformation')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/rankings_data_ingestion_trigger')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Started",
+				"pipelines": [
+					{
+						"pipelineReference": {
+							"referenceName": "rankings_data_ingestions",
+							"type": "PipelineReference"
+						},
+						"parameters": {}
+					}
+				],
+				"type": "ScheduleTrigger",
+				"typeProperties": {
+					"recurrence": {
+						"frequency": "Day",
+						"interval": 1,
+						"startTime": "2024-02-16T09:00:00",
+						"timeZone": "Eastern Standard Time"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/rankings_data_ingestions')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/rankings_data_transformation_trigger')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Started",
+				"pipelines": [
+					{
+						"pipelineReference": {
+							"referenceName": "rankings_data_transformations",
+							"type": "PipelineReference"
+						},
+						"parameters": {}
+					}
+				],
+				"type": "ScheduleTrigger",
+				"typeProperties": {
+					"recurrence": {
+						"frequency": "Day",
+						"interval": 1,
+						"startTime": "2024-02-16T10:00:00",
+						"timeZone": "Eastern Standard Time"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/rankings_data_transformations')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Matches_Details_DataFlow')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "LiveScoreSink",
+								"type": "DatasetReference"
+							},
+							"name": "LiveMatchesSource"
+						},
+						{
+							"dataset": {
+								"referenceName": "RecentMatchesSink",
+								"type": "DatasetReference"
+							},
+							"name": "RecentMatchesSource"
+						},
+						{
+							"dataset": {
+								"referenceName": "UpcomingMatchesSink",
+								"type": "DatasetReference"
+							},
+							"name": "UpcomingsMatchesSource"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "LiveScore",
+								"type": "DatasetReference"
+							},
+							"name": "LiveMatchesSink"
+						},
+						{
+							"dataset": {
+								"referenceName": "RecentMatches",
+								"type": "DatasetReference"
+							},
+							"name": "RecentMatchesSink"
+						},
+						{
+							"dataset": {
+								"referenceName": "Upcomingmatches",
+								"type": "DatasetReference"
+							},
+							"name": "UpcomingMatchesSink"
+						}
+					],
+					"transformations": [
+						{
+							"name": "LiveMatchesFlatten"
+						},
+						{
+							"name": "LiveMatchesDerivedColumn"
+						},
+						{
+							"name": "LiveMatchesCast"
+						},
+						{
+							"name": "LiveMatchesAggregate"
+						},
+						{
+							"name": "LiveMatchesFilter"
+						},
+						{
+							"name": "LiveMatchesSelect"
+						},
+						{
+							"name": "RecentMatchesFlatten"
+						},
+						{
+							"name": "UpcomingMatchesFlatten"
+						},
+						{
+							"name": "RecentMatchesCast"
+						},
+						{
+							"name": "UpcomingMatchesCast"
+						},
+						{
+							"name": "RecentMatchesDerivedColumn"
+						},
+						{
+							"name": "UpcomingMatchesDerivedColumn"
+						},
+						{
+							"name": "RecentMatchesAggregate"
+						},
+						{
+							"name": "UpcomingMatchesAggregate"
+						},
+						{
+							"name": "RecentMatchesFilter"
+						},
+						{
+							"name": "UpcomingMatchesFilter"
+						},
+						{
+							"name": "RecentMatchesSelect"
+						},
+						{
+							"name": "UpcomingMatchesSelect"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          typeMatches as (matchType as string, seriesMatches as (seriesAdWrapper as (seriesId as integer, seriesName as string, matches as (matchInfo as (matchId as integer, seriesId as integer, seriesName as string, matchDesc as string, matchFormat as string, startDate as string, endDate as string, state as string, status as string, team1 as (teamId as integer, teamName as string, teamSName as string, imageId as integer), team2 as (teamId as integer, teamName as string, teamSName as string, imageId as integer), venueInfo as (id as integer, ground as string, city as string, timezone as string, latitude as string, longitude as string), currBatTeamId as integer, seriesStartDt as string, seriesEndDt as string, isTimeAnnounced as boolean, stateTitle as string), matchScore as (team1Score as (inngs1 as (inningsId as integer, runs as integer, wickets as integer, overs as double)), team2Score as (inngs1 as (inningsId as integer, runs as integer, wickets as integer, overs as double))))[]))[])[],",
+						"          filters as (matchType as string[]),",
+						"          appIndex as (seoTitle as string, webURL as string),",
+						"          responseLastUpdated as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     documentForm: 'arrayOfDocuments') ~> LiveMatchesSource",
+						"source(output(",
+						"          typeMatches as (matchType as string, seriesMatches as (seriesAdWrapper as (seriesId as integer, seriesName as string, matches as (matchInfo as (matchId as integer, seriesId as integer, seriesName as string, matchDesc as string, matchFormat as string, startDate as string, endDate as string, state as string, status as string, team1 as (teamId as integer, teamName as string, teamSName as string, imageId as integer), team2 as (teamId as integer, teamName as string, teamSName as string, imageId as integer), venueInfo as (id as integer, ground as string, city as string, timezone as string, latitude as string, longitude as string), currBatTeamId as integer, seriesStartDt as string, seriesEndDt as string, isTimeAnnounced as boolean, stateTitle as string), matchScore as (team1Score as (inngs1 as (inningsId as integer, runs as integer, wickets as integer, overs as double), inngs2 as (inningsId as integer, runs as integer, wickets as integer, overs as double)), team2Score as (inngs1 as (inningsId as integer, runs as integer, wickets as integer, overs as double), inngs2 as (inningsId as integer, runs as integer, wickets as integer, overs as double))))[]))[])[],",
+						"          filters as (matchType as string[]),",
+						"          appIndex as (seoTitle as string, webURL as string),",
+						"          responseLastUpdated as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     documentForm: 'arrayOfDocuments') ~> RecentMatchesSource",
+						"source(output(",
+						"          typeMatches as (matchType as string, seriesMatches as (seriesAdWrapper as (seriesId as integer, seriesName as string, matches as (matchInfo as (matchId as integer, seriesId as integer, seriesName as string, matchDesc as string, matchFormat as string, startDate as string, endDate as string, state as string, status as string, team1 as (teamId as integer, teamName as string, teamSName as string, imageId as integer), team2 as (teamId as integer, teamName as string, teamSName as string, imageId as integer), venueInfo as (id as integer, ground as string, city as string, timezone as string, latitude as string, longitude as string), seriesStartDt as string, seriesEndDt as string, isTimeAnnounced as boolean, stateTitle as string))[]))[])[],",
+						"          filters as (matchType as string[]),",
+						"          appIndex as (seoTitle as string, webURL as string),",
+						"          responseLastUpdated as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     documentForm: 'documentPerLine') ~> UpcomingsMatchesSource",
+						"LiveMatchesSource foldDown(unrollMultiple(typeMatches,typeMatches.seriesMatches,typeMatches.seriesMatches.seriesAdWrapper.matches,filters.matchType),",
+						"     mapColumn(",
+						"          match_type = typeMatches.matchType,",
+						"          seriesId = typeMatches.seriesMatches.seriesAdWrapper.seriesId,",
+						"          seriesName = typeMatches.seriesMatches.seriesAdWrapper.seriesName,",
+						"          matchId = typeMatches.seriesMatches.seriesAdWrapper.matches.matchInfo.matchId,",
+						"          matchDesc = typeMatches.seriesMatches.seriesAdWrapper.matches.matchInfo.matchDesc,",
+						"          matchFormat = typeMatches.seriesMatches.seriesAdWrapper.matches.matchInfo.matchFormat,",
+						"          matchstartDate = typeMatches.seriesMatches.seriesAdWrapper.matches.matchInfo.startDate,",
+						"          matchendDate = typeMatches.seriesMatches.seriesAdWrapper.matches.matchInfo.endDate,",
+						"          matchstate = typeMatches.seriesMatches.seriesAdWrapper.matches.matchInfo.state,",
+						"          matchstatus = typeMatches.seriesMatches.seriesAdWrapper.matches.matchInfo.status,",
+						"          team1Id = typeMatches.seriesMatches.seriesAdWrapper.matches.matchInfo.team1.teamId,",
+						"          team1Name = typeMatches.seriesMatches.seriesAdWrapper.matches.matchInfo.team1.teamName,",
+						"          team1SName = typeMatches.seriesMatches.seriesAdWrapper.matches.matchInfo.team1.teamSName,",
+						"          team2Id = typeMatches.seriesMatches.seriesAdWrapper.matches.matchInfo.team2.teamId,",
+						"          team2Name = typeMatches.seriesMatches.seriesAdWrapper.matches.matchInfo.team2.teamName,",
+						"          team2SName = typeMatches.seriesMatches.seriesAdWrapper.matches.matchInfo.team2.teamSName,",
+						"          venueid = typeMatches.seriesMatches.seriesAdWrapper.matches.matchInfo.venueInfo.id,",
+						"          match_ground_name = typeMatches.seriesMatches.seriesAdWrapper.matches.matchInfo.venueInfo.ground,",
+						"          match_city = typeMatches.seriesMatches.seriesAdWrapper.matches.matchInfo.venueInfo.city,",
+						"          timezone = typeMatches.seriesMatches.seriesAdWrapper.matches.matchInfo.venueInfo.timezone,",
+						"          latitude = typeMatches.seriesMatches.seriesAdWrapper.matches.matchInfo.venueInfo.latitude,",
+						"          longitude = typeMatches.seriesMatches.seriesAdWrapper.matches.matchInfo.venueInfo.longitude,",
+						"          currBatTeamId = typeMatches.seriesMatches.seriesAdWrapper.matches.matchInfo.currBatTeamId,",
+						"          team1_innings1_inningsId = typeMatches.seriesMatches.seriesAdWrapper.matches.matchScore.team1Score.inngs1.inningsId,",
+						"          team1_innings1_runs = typeMatches.seriesMatches.seriesAdWrapper.matches.matchScore.team1Score.inngs1.runs,",
+						"          team1_innings1_wickets = typeMatches.seriesMatches.seriesAdWrapper.matches.matchScore.team1Score.inngs1.wickets,",
+						"          team1_innings1_overs = typeMatches.seriesMatches.seriesAdWrapper.matches.matchScore.team1Score.inngs1.overs,",
+						"          team2_innings1_inningsId = typeMatches.seriesMatches.seriesAdWrapper.matches.matchScore.team2Score.inngs1.inningsId,",
+						"          team2_innings1_runs = typeMatches.seriesMatches.seriesAdWrapper.matches.matchScore.team2Score.inngs1.runs,",
+						"          team2_innings1_wickets = typeMatches.seriesMatches.seriesAdWrapper.matches.matchScore.team2Score.inngs1.wickets,",
+						"          team2_innings1_overs = typeMatches.seriesMatches.seriesAdWrapper.matches.matchScore.team2Score.inngs1.overs,",
+						"          responseLastUpdated",
+						"     ),",
+						"     skipDuplicateMapInputs: false,",
+						"     skipDuplicateMapOutputs: false) ~> LiveMatchesFlatten",
+						"LiveMatchesCast derive(timezone = (toInteger(substring(timezone,1,3)) * 3600)  + (toInteger(substring(timezone,5,2)) * 60),",
+						"          matchstartDate = toDate(toTimestamp(matchstartDate) + (toInteger(substring(timezone,1,3)) * 3600)  + (toInteger(substring(timezone,5,2)) * 60)),",
+						"          matchendDate = toDate(toTimestamp(matchendDate) + (toInteger(substring(timezone,1,3)) * 3600)  + (toInteger(substring(timezone,5,2)) * 60)),",
+						"          responseLastUpdated = toDate(toTimestamp(responseLastUpdated) + (toInteger(substring(timezone,1,3)) * 3600)  + (toInteger(substring(timezone,5,2)) * 60))) ~> LiveMatchesDerivedColumn",
+						"LiveMatchesFlatten cast(output(",
+						"          matchstartDate as long,",
+						"          matchendDate as long,",
+						"          timezone as string,",
+						"          responseLastUpdated as long",
+						"     ),",
+						"     errors: true) ~> LiveMatchesCast",
+						"LiveMatchesDerivedColumn aggregate(groupBy(match_type,",
+						"          seriesId,",
+						"          seriesName,",
+						"          matchId,",
+						"          matchDesc,",
+						"          matchFormat,",
+						"          matchstartDate,",
+						"          matchendDate,",
+						"          matchstate,",
+						"          matchstatus,",
+						"          team1Id,",
+						"          team1Name,",
+						"          team1SName,",
+						"          team2Id,",
+						"          team2Name,",
+						"          team2SName,",
+						"          venueid,",
+						"          match_ground_name,",
+						"          match_city,",
+						"          timezone,",
+						"          latitude,",
+						"          longitude,",
+						"          currBatTeamId,",
+						"          team1_innings1_inningsId,",
+						"          team1_innings1_runs,",
+						"          team1_innings1_wickets,",
+						"          team1_innings1_overs,",
+						"          team2_innings1_inningsId,",
+						"          team2_innings1_runs,",
+						"          team2_innings1_wickets,",
+						"          team2_innings1_overs),",
+						"     test = sum(1)) ~> LiveMatchesAggregate",
+						"LiveMatchesAggregate filter(not(isNull(seriesId))) ~> LiveMatchesFilter",
+						"LiveMatchesFilter select(mapColumn(",
+						"          match_type,",
+						"          seriesId,",
+						"          seriesName,",
+						"          matchId,",
+						"          matchDesc,",
+						"          matchFormat,",
+						"          matchstartDate,",
+						"          matchendDate,",
+						"          matchstate,",
+						"          matchstatus,",
+						"          team1Id,",
+						"          team1Name,",
+						"          team1SName,",
+						"          team2Id,",
+						"          team2Name,",
+						"          team2SName,",
+						"          venueid,",
+						"          match_ground_name,",
+						"          match_city,",
+						"          timezone,",
+						"          latitude,",
+						"          longitude,",
+						"          currBatTeamId,",
+						"          team1inningsId = team1_innings1_inningsId,",
+						"          team1runs = team1_innings1_runs,",
+						"          team1wickets = team1_innings1_wickets,",
+						"          team1overs = team1_innings1_overs,",
+						"          team2inningsId = team1_innings1_inningsId,",
+						"          team2runs = team2_innings1_runs,",
+						"          team2wickets = team2_innings1_wickets,",
+						"          team2overs = team2_innings1_overs",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> LiveMatchesSelect",
+						"RecentMatchesSource foldDown(unrollMultiple(typeMatches,typeMatches.seriesMatches,typeMatches.seriesMatches.seriesAdWrapper.matches,filters.matchType),",
+						"     mapColumn(",
+						"          match_type = typeMatches.matchType,",
+						"          seriesId = typeMatches.seriesMatches.seriesAdWrapper.seriesId,",
+						"          seriesName = typeMatches.seriesMatches.seriesAdWrapper.seriesName,",
+						"          matchId = typeMatches.seriesMatches.seriesAdWrapper.matches.matchInfo.matchId,",
+						"          matchDesc = typeMatches.seriesMatches.seriesAdWrapper.matches.matchInfo.matchDesc,",
+						"          matchFormat = typeMatches.seriesMatches.seriesAdWrapper.matches.matchInfo.matchFormat,",
+						"          matchstartDate = typeMatches.seriesMatches.seriesAdWrapper.matches.matchInfo.startDate,",
+						"          matchendDate = typeMatches.seriesMatches.seriesAdWrapper.matches.matchInfo.endDate,",
+						"          matchstate = typeMatches.seriesMatches.seriesAdWrapper.matches.matchInfo.state,",
+						"          matchstatus = typeMatches.seriesMatches.seriesAdWrapper.matches.matchInfo.status,",
+						"          team1Id = typeMatches.seriesMatches.seriesAdWrapper.matches.matchInfo.team1.teamId,",
+						"          team1Name = typeMatches.seriesMatches.seriesAdWrapper.matches.matchInfo.team1.teamName,",
+						"          team1SName = typeMatches.seriesMatches.seriesAdWrapper.matches.matchInfo.team1.teamSName,",
+						"          team2Id = typeMatches.seriesMatches.seriesAdWrapper.matches.matchInfo.team2.teamId,",
+						"          team2Name = typeMatches.seriesMatches.seriesAdWrapper.matches.matchInfo.team2.teamName,",
+						"          team2SName = typeMatches.seriesMatches.seriesAdWrapper.matches.matchInfo.team2.teamSName,",
+						"          venueid = typeMatches.seriesMatches.seriesAdWrapper.matches.matchInfo.venueInfo.id,",
+						"          match_ground_name = typeMatches.seriesMatches.seriesAdWrapper.matches.matchInfo.venueInfo.ground,",
+						"          match_city = typeMatches.seriesMatches.seriesAdWrapper.matches.matchInfo.venueInfo.city,",
+						"          timezone = typeMatches.seriesMatches.seriesAdWrapper.matches.matchInfo.venueInfo.timezone,",
+						"          latitude = typeMatches.seriesMatches.seriesAdWrapper.matches.matchInfo.venueInfo.latitude,",
+						"          longitude = typeMatches.seriesMatches.seriesAdWrapper.matches.matchInfo.venueInfo.longitude,",
+						"          currBatTeamId = typeMatches.seriesMatches.seriesAdWrapper.matches.matchInfo.currBatTeamId,",
+						"          team1_innings1_inningsId = typeMatches.seriesMatches.seriesAdWrapper.matches.matchScore.team1Score.inngs1.inningsId,",
+						"          team1_innings1_runs = typeMatches.seriesMatches.seriesAdWrapper.matches.matchScore.team1Score.inngs1.runs,",
+						"          team1_innings1_wickets = typeMatches.seriesMatches.seriesAdWrapper.matches.matchScore.team1Score.inngs1.wickets,",
+						"          team1_innings1_overs = typeMatches.seriesMatches.seriesAdWrapper.matches.matchScore.team1Score.inngs1.overs,",
+						"          team1_innings2_inningsId = typeMatches.seriesMatches.seriesAdWrapper.matches.matchScore.team1Score.inngs2.inningsId,",
+						"          team1_innings2_runs = typeMatches.seriesMatches.seriesAdWrapper.matches.matchScore.team1Score.inngs2.runs,",
+						"          team1_innings2_wickets = typeMatches.seriesMatches.seriesAdWrapper.matches.matchScore.team1Score.inngs2.wickets,",
+						"          team1_innings2_overs = typeMatches.seriesMatches.seriesAdWrapper.matches.matchScore.team1Score.inngs2.overs,",
+						"          team2_innings1_inningsId = typeMatches.seriesMatches.seriesAdWrapper.matches.matchScore.team2Score.inngs1.inningsId,",
+						"          team2_innings1_runs = typeMatches.seriesMatches.seriesAdWrapper.matches.matchScore.team2Score.inngs1.runs,",
+						"          team2_innings1_wickets = typeMatches.seriesMatches.seriesAdWrapper.matches.matchScore.team2Score.inngs1.wickets,",
+						"          team2_innings1_overs = typeMatches.seriesMatches.seriesAdWrapper.matches.matchScore.team2Score.inngs1.overs,",
+						"          team2_innings2_inningsId = typeMatches.seriesMatches.seriesAdWrapper.matches.matchScore.team2Score.inngs2.inningsId,",
+						"          team2_innings2_runs = typeMatches.seriesMatches.seriesAdWrapper.matches.matchScore.team2Score.inngs2.runs,",
+						"          team2_innings2_wickets = typeMatches.seriesMatches.seriesAdWrapper.matches.matchScore.team2Score.inngs2.wickets,",
+						"          team2_innings2_overs = typeMatches.seriesMatches.seriesAdWrapper.matches.matchScore.team2Score.inngs2.overs,",
+						"          responseLastUpdated",
+						"     ),",
+						"     skipDuplicateMapInputs: false,",
+						"     skipDuplicateMapOutputs: false) ~> RecentMatchesFlatten",
+						"UpcomingsMatchesSource foldDown(unrollMultiple(typeMatches,typeMatches.seriesMatches,typeMatches.seriesMatches.seriesAdWrapper.matches,filters.matchType),",
+						"     mapColumn(",
+						"          match_type = typeMatches.matchType,",
+						"          seriesId = typeMatches.seriesMatches.seriesAdWrapper.seriesId,",
+						"          seriesName = typeMatches.seriesMatches.seriesAdWrapper.seriesName,",
+						"          matchId = typeMatches.seriesMatches.seriesAdWrapper.matches.matchInfo.matchId,",
+						"          matchDesc = typeMatches.seriesMatches.seriesAdWrapper.matches.matchInfo.matchDesc,",
+						"          matchFormat = typeMatches.seriesMatches.seriesAdWrapper.matches.matchInfo.matchFormat,",
+						"          matchstartDate = typeMatches.seriesMatches.seriesAdWrapper.matches.matchInfo.startDate,",
+						"          matchendDate = typeMatches.seriesMatches.seriesAdWrapper.matches.matchInfo.endDate,",
+						"          matchstate = typeMatches.seriesMatches.seriesAdWrapper.matches.matchInfo.state,",
+						"          matchstatus = typeMatches.seriesMatches.seriesAdWrapper.matches.matchInfo.status,",
+						"          team1Id = typeMatches.seriesMatches.seriesAdWrapper.matches.matchInfo.team1.teamId,",
+						"          team1Name = typeMatches.seriesMatches.seriesAdWrapper.matches.matchInfo.team1.teamName,",
+						"          team1SName = typeMatches.seriesMatches.seriesAdWrapper.matches.matchInfo.team1.teamSName,",
+						"          team2Id = typeMatches.seriesMatches.seriesAdWrapper.matches.matchInfo.team2.teamId,",
+						"          team2Name = typeMatches.seriesMatches.seriesAdWrapper.matches.matchInfo.team2.teamName,",
+						"          team2SName = typeMatches.seriesMatches.seriesAdWrapper.matches.matchInfo.team2.teamSName,",
+						"          venueid = typeMatches.seriesMatches.seriesAdWrapper.matches.matchInfo.venueInfo.id,",
+						"          match_ground_name = typeMatches.seriesMatches.seriesAdWrapper.matches.matchInfo.venueInfo.ground,",
+						"          match_city = typeMatches.seriesMatches.seriesAdWrapper.matches.matchInfo.venueInfo.city,",
+						"          timezone = typeMatches.seriesMatches.seriesAdWrapper.matches.matchInfo.venueInfo.timezone,",
+						"          latitude = typeMatches.seriesMatches.seriesAdWrapper.matches.matchInfo.venueInfo.latitude,",
+						"          longitude = typeMatches.seriesMatches.seriesAdWrapper.matches.matchInfo.venueInfo.longitude,",
+						"          isTimeAnnounced = typeMatches.seriesMatches.seriesAdWrapper.matches.matchInfo.isTimeAnnounced,",
+						"          responseLastUpdated",
+						"     ),",
+						"     skipDuplicateMapInputs: false,",
+						"     skipDuplicateMapOutputs: false) ~> UpcomingMatchesFlatten",
+						"RecentMatchesFlatten cast(output(",
+						"          matchstartDate as long,",
+						"          matchendDate as long,",
+						"          timezone as string,",
+						"          responseLastUpdated as long",
+						"     ),",
+						"     errors: true) ~> RecentMatchesCast",
+						"UpcomingMatchesFlatten cast(output(",
+						"          matchstartDate as long,",
+						"          matchendDate as long,",
+						"          timezone as string,",
+						"          responseLastUpdated as long",
+						"     ),",
+						"     errors: true) ~> UpcomingMatchesCast",
+						"RecentMatchesCast derive(timezone = (toInteger(substring(timezone,1,3)) * 3600)  + (toInteger(substring(timezone,5,2)) * 60),",
+						"          matchstartDate = toDate(toTimestamp(matchstartDate) + (toInteger(substring(timezone,1,3)) * 3600)  + (toInteger(substring(timezone,5,2)) * 60)),",
+						"          matchendDate = toDate(toTimestamp(matchendDate) + (toInteger(substring(timezone,1,3)) * 3600)  + (toInteger(substring(timezone,5,2)) * 60)),",
+						"          responseLastUpdated = toDate(responseLastUpdated + (toInteger(substring(timezone,1,3)) * 3600)  + (toInteger(substring(timezone,5,2)) * 60))) ~> RecentMatchesDerivedColumn",
+						"UpcomingMatchesCast derive(timezone = (toInteger(substring(timezone,1,3)) * 3600)  + (toInteger(substring(timezone,5,2)) * 60),",
+						"          matchstartDate = toDate(toTimestamp(matchstartDate) + (toInteger(substring(timezone,1,3)) * 3600)  + (toInteger(substring(timezone,5,2)) * 60)),",
+						"          matchendDate = toDate(toTimestamp(matchendDate) + (toInteger(substring(timezone,1,3)) * 3600)  + (toInteger(substring(timezone,5,2)) * 60)),",
+						"          responseLastUpdated = toDate(responseLastUpdated + (toInteger(substring(timezone,1,3)) * 3600)  + (toInteger(substring(timezone,5,2)) * 60))) ~> UpcomingMatchesDerivedColumn",
+						"RecentMatchesDerivedColumn aggregate(groupBy(match_type,",
+						"          seriesId,",
+						"          seriesName,",
+						"          matchId,",
+						"          matchDesc,",
+						"          matchFormat,",
+						"          matchstartDate,",
+						"          matchendDate,",
+						"          matchstate,",
+						"          matchstatus,",
+						"          team1Id,",
+						"          team1Name,",
+						"          team1SName,",
+						"          team2Id,",
+						"          team2Name,",
+						"          team2SName,",
+						"          venueid,",
+						"          match_ground_name,",
+						"          match_city,",
+						"          timezone,",
+						"          latitude,",
+						"          longitude,",
+						"          currBatTeamId,",
+						"          team1_innings1_inningsId,",
+						"          team1_innings1_runs,",
+						"          team1_innings1_wickets,",
+						"          team1_innings1_overs,",
+						"          team1_innings2_inningsId,",
+						"          team1_innings2_runs,",
+						"          team1_innings2_wickets,",
+						"          team1_innings2_overs,",
+						"          team2_innings1_inningsId,",
+						"          team2_innings1_runs,",
+						"          team2_innings1_wickets,",
+						"          team2_innings1_overs,",
+						"          team2_innings2_inningsId,",
+						"          team2_innings2_runs,",
+						"          team2_innings2_wickets,",
+						"          team2_innings2_overs,",
+						"          responseLastUpdated),",
+						"     test = sum(1)) ~> RecentMatchesAggregate",
+						"UpcomingMatchesDerivedColumn aggregate(groupBy(match_type,",
+						"          seriesId,",
+						"          seriesName,",
+						"          matchId,",
+						"          matchDesc,",
+						"          matchFormat,",
+						"          matchstartDate,",
+						"          matchendDate,",
+						"          matchstate,",
+						"          matchstatus,",
+						"          team1Id,",
+						"          team1Name,",
+						"          team1SName,",
+						"          team2Id,",
+						"          team2Name,",
+						"          team2SName,",
+						"          venueid,",
+						"          match_ground_name,",
+						"          match_city,",
+						"          timezone,",
+						"          latitude,",
+						"          longitude,",
+						"          isTimeAnnounced,",
+						"          responseLastUpdated),",
+						"     test = sum(1)) ~> UpcomingMatchesAggregate",
+						"RecentMatchesAggregate filter(not(isNull(seriesId))) ~> RecentMatchesFilter",
+						"UpcomingMatchesAggregate filter(not(isNull(seriesId))) ~> UpcomingMatchesFilter",
+						"RecentMatchesFilter select(mapColumn(",
+						"          match_type,",
+						"          seriesId,",
+						"          seriesName,",
+						"          matchId,",
+						"          matchDesc,",
+						"          matchFormat,",
+						"          matchstartDate,",
+						"          matchendDate,",
+						"          matchstate,",
+						"          matchstatus,",
+						"          team1Id,",
+						"          team1Name,",
+						"          team1SName,",
+						"          team2Id,",
+						"          team2Name,",
+						"          team2SName,",
+						"          venueid,",
+						"          match_ground_name,",
+						"          match_city,",
+						"          timezone,",
+						"          latitude,",
+						"          longitude,",
+						"          currBatTeamId,",
+						"          team1_innings1_inningsId,",
+						"          team1_innings1_runs,",
+						"          team1_innings1_wickets,",
+						"          team1_innings1_overs,",
+						"          team1_innings2_inningsId,",
+						"          team1_innings2_runs,",
+						"          team1_innings2_wickets,",
+						"          team1_innings2_overs,",
+						"          team2_innings1_inningsId,",
+						"          team2_innings1_runs,",
+						"          team2_innings1_wickets,",
+						"          team2_innings1_overs,",
+						"          team2_innings2_inningsId,",
+						"          team2_innings2_runs,",
+						"          team2_innings2_wickets,",
+						"          team2_innings2_overs,",
+						"          responseLastUpdated",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> RecentMatchesSelect",
+						"UpcomingMatchesFilter select(mapColumn(",
+						"          match_type,",
+						"          seriesId,",
+						"          seriesName,",
+						"          matchId,",
+						"          matchDesc,",
+						"          matchFormat,",
+						"          matchstartDate,",
+						"          matchendDate,",
+						"          matchstate,",
+						"          matchstatus,",
+						"          team1Id,",
+						"          team1Name,",
+						"          team1SName,",
+						"          team2Id,",
+						"          team2Name,",
+						"          team2SName,",
+						"          venueid,",
+						"          match_ground_name,",
+						"          match_city,",
+						"          timezone,",
+						"          latitude,",
+						"          longitude,",
+						"          isTimeAnnounced,",
+						"          responseLastUpdated",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> UpcomingMatchesSelect",
+						"LiveMatchesSelect sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     partitionFileNames:['live_scores.csv'],",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     partitionBy('hash', 1)) ~> LiveMatchesSink",
+						"RecentMatchesSelect sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     partitionFileNames:['recent_matches.csv'],",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     partitionBy('hash', 1)) ~> RecentMatchesSink",
+						"UpcomingMatchesSelect sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     partitionFileNames:['upcoming_matches.csv'],",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     partitionBy('hash', 1)) ~> UpcomingMatchesSink"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/LiveScoreSink')]",
+				"[concat(variables('factoryId'), '/datasets/RecentMatchesSink')]",
+				"[concat(variables('factoryId'), '/datasets/UpcomingMatchesSink')]",
+				"[concat(variables('factoryId'), '/datasets/LiveScore')]",
+				"[concat(variables('factoryId'), '/datasets/RecentMatches')]",
+				"[concat(variables('factoryId'), '/datasets/Upcomingmatches')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Rankings_DataFlow')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "ODIRankingsSink",
+								"type": "DatasetReference"
+							},
+							"name": "ODIBatsmanRankingsSource",
+							"description": "Import data from ODIBatsmanRankingsSink"
+						},
+						{
+							"dataset": {
+								"referenceName": "TestBatsmanRankingSink",
+								"type": "DatasetReference"
+							},
+							"name": "TestBatsmanRankingSource"
+						},
+						{
+							"dataset": {
+								"referenceName": "T20BatsmanRankingsSink",
+								"type": "DatasetReference"
+							},
+							"name": "T20BatsmanRankingsSource"
+						},
+						{
+							"dataset": {
+								"referenceName": "ODIBowlersRankingsSink",
+								"type": "DatasetReference"
+							},
+							"name": "ODIBowlersRankingsSource"
+						},
+						{
+							"dataset": {
+								"referenceName": "TestBowlersRankingsSink",
+								"type": "DatasetReference"
+							},
+							"name": "TestBowlersRankingsSource"
+						},
+						{
+							"dataset": {
+								"referenceName": "T20BowlerRankingsSink",
+								"type": "DatasetReference"
+							},
+							"name": "T20BowlersRankingsSource"
+						},
+						{
+							"dataset": {
+								"referenceName": "ODIAllroundersRankingsSink",
+								"type": "DatasetReference"
+							},
+							"name": "ODIAllroundersRankingsSource"
+						},
+						{
+							"dataset": {
+								"referenceName": "TestAllroundersRankingsSink",
+								"type": "DatasetReference"
+							},
+							"name": "TestAllroundersRankingsSource"
+						},
+						{
+							"dataset": {
+								"referenceName": "T20AllroundersRankingsSink",
+								"type": "DatasetReference"
+							},
+							"name": "T20AllroundersRankingsSource"
+						},
+						{
+							"dataset": {
+								"referenceName": "ODITeamsRankingsSink",
+								"type": "DatasetReference"
+							},
+							"name": "ODITeamsRankingsSource"
+						},
+						{
+							"dataset": {
+								"referenceName": "TestTeamsRankingsSink",
+								"type": "DatasetReference"
+							},
+							"name": "TestTeamsRankingsSource"
+						},
+						{
+							"dataset": {
+								"referenceName": "T20TeamsRankingsSink",
+								"type": "DatasetReference"
+							},
+							"name": "T20TeamsRankingsSource"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "Transformed_Data",
+								"type": "DatasetReference"
+							},
+							"name": "sink1"
+						},
+						{
+							"dataset": {
+								"referenceName": "Transformed_Data",
+								"type": "DatasetReference"
+							},
+							"name": "sink2"
+						},
+						{
+							"dataset": {
+								"referenceName": "Transformed_Data",
+								"type": "DatasetReference"
+							},
+							"name": "sink3"
+						},
+						{
+							"dataset": {
+								"referenceName": "Transformed_Data",
+								"type": "DatasetReference"
+							},
+							"name": "sink4"
+						},
+						{
+							"dataset": {
+								"referenceName": "Transformed_Data",
+								"type": "DatasetReference"
+							},
+							"name": "sink5"
+						},
+						{
+							"dataset": {
+								"referenceName": "Transformed_Data",
+								"type": "DatasetReference"
+							},
+							"name": "sink6"
+						},
+						{
+							"dataset": {
+								"referenceName": "Transformed_Data",
+								"type": "DatasetReference"
+							},
+							"name": "sink7"
+						},
+						{
+							"dataset": {
+								"referenceName": "Transformed_Data",
+								"type": "DatasetReference"
+							},
+							"name": "sink8"
+						},
+						{
+							"dataset": {
+								"referenceName": "Transformed_Data",
+								"type": "DatasetReference"
+							},
+							"name": "sink9"
+						},
+						{
+							"dataset": {
+								"referenceName": "Transformed_Data",
+								"type": "DatasetReference"
+							},
+							"name": "sink10"
+						},
+						{
+							"dataset": {
+								"referenceName": "Transformed_Data",
+								"type": "DatasetReference"
+							},
+							"name": "sink11"
+						},
+						{
+							"dataset": {
+								"referenceName": "Transformed_Data",
+								"type": "DatasetReference"
+							},
+							"name": "sink12"
+						}
+					],
+					"transformations": [
+						{
+							"name": "flatten1"
+						},
+						{
+							"name": "cast1"
+						},
+						{
+							"name": "flatten2"
+						},
+						{
+							"name": "cast2"
+						},
+						{
+							"name": "flatten3"
+						},
+						{
+							"name": "cast3"
+						},
+						{
+							"name": "flatten4"
+						},
+						{
+							"name": "cast4"
+						},
+						{
+							"name": "flatten5"
+						},
+						{
+							"name": "cast5"
+						},
+						{
+							"name": "flatten6"
+						},
+						{
+							"name": "cast6"
+						},
+						{
+							"name": "flatten7"
+						},
+						{
+							"name": "cast7"
+						},
+						{
+							"name": "flatten8"
+						},
+						{
+							"name": "cast8"
+						},
+						{
+							"name": "flatten9"
+						},
+						{
+							"name": "cast9"
+						},
+						{
+							"name": "flatten10"
+						},
+						{
+							"name": "cast10"
+						},
+						{
+							"name": "flatten11"
+						},
+						{
+							"name": "flatten12"
+						},
+						{
+							"name": "cast11"
+						},
+						{
+							"name": "cast12"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          rank as (id as string, rank as string, name as string, country as string, rating as string, points as string, lastUpdatedOn as string, trend as string, faceImageId as string, countryId as string, avg as string)[],",
+						"          appIndex as (seoTitle as string, webURL as string)",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     documentForm: 'arrayOfDocuments') ~> ODIBatsmanRankingsSource",
+						"source(output(",
+						"          rank as (id as string, rank as string, name as string, country as string, rating as string, points as string, lastUpdatedOn as string, trend as string, faceImageId as string, countryId as string, avg as string)[],",
+						"          appIndex as (seoTitle as string, webURL as string)",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     documentForm: 'arrayOfDocuments') ~> TestBatsmanRankingSource",
+						"source(output(",
+						"          rank as (id as string, rank as string, name as string, country as string, rating as string, points as string, lastUpdatedOn as string, trend as string, faceImageId as string, countryId as string, avg as string)[],",
+						"          appIndex as (seoTitle as string, webURL as string)",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     documentForm: 'arrayOfDocuments') ~> T20BatsmanRankingsSource",
+						"source(output(",
+						"          rank as (id as string, rank as string, name as string, country as string, rating as string, points as string, lastUpdatedOn as string, trend as string, faceImageId as string, countryId as string, avg as string)[],",
+						"          appIndex as (seoTitle as string, webURL as string)",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     documentForm: 'arrayOfDocuments') ~> ODIBowlersRankingsSource",
+						"source(output(",
+						"          rank as (id as string, rank as string, name as string, country as string, rating as string, points as string, lastUpdatedOn as string, trend as string, faceImageId as string, countryId as string, avg as string)[],",
+						"          appIndex as (seoTitle as string, webURL as string)",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     documentForm: 'arrayOfDocuments') ~> TestBowlersRankingsSource",
+						"source(output(",
+						"          rank as (id as string, rank as string, name as string, country as string, rating as string, points as string, lastUpdatedOn as string, trend as string, faceImageId as string, countryId as string, avg as string)[],",
+						"          appIndex as (seoTitle as string, webURL as string)",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     documentForm: 'arrayOfDocuments') ~> T20BowlersRankingsSource",
+						"source(output(",
+						"          rank as (id as string, rank as string, name as string, country as string, rating as string, points as string, lastUpdatedOn as string, trend as string, faceImageId as string, countryId as string)[],",
+						"          appIndex as (seoTitle as string, webURL as string)",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     documentForm: 'arrayOfDocuments') ~> ODIAllroundersRankingsSource",
+						"source(output(",
+						"          rank as (id as string, rank as string, name as string, country as string, rating as string, points as string, lastUpdatedOn as string, trend as string, faceImageId as string, countryId as string)[],",
+						"          appIndex as (seoTitle as string, webURL as string)",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     documentForm: 'arrayOfDocuments') ~> TestAllroundersRankingsSource",
+						"source(output(",
+						"          rank as (id as string, rank as string, name as string, country as string, rating as string, points as string, lastUpdatedOn as string, trend as string, faceImageId as string, countryId as string)[],",
+						"          appIndex as (seoTitle as string, webURL as string)",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     documentForm: 'arrayOfDocuments') ~> T20AllroundersRankingsSource",
+						"source(output(",
+						"          rank as (id as string, rank as string, name as string, rating as string, matches as string, points as string, lastUpdatedOn as string, imageId as string)[],",
+						"          appIndex as (seoTitle as string, webURL as string)",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     documentForm: 'arrayOfDocuments') ~> ODITeamsRankingsSource",
+						"source(output(",
+						"          rank as (id as string, rank as string, name as string, rating as string, matches as string, points as string, lastUpdatedOn as string, imageId as string)[],",
+						"          appIndex as (seoTitle as string, webURL as string)",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     documentForm: 'arrayOfDocuments') ~> TestTeamsRankingsSource",
+						"source(output(",
+						"          rank as (id as string, rank as string, name as string, rating as string, matches as string, points as string, lastUpdatedOn as string, imageId as string)[],",
+						"          appIndex as (seoTitle as string, webURL as string)",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     documentForm: 'arrayOfDocuments') ~> T20TeamsRankingsSource",
+						"ODIBatsmanRankingsSource foldDown(unroll(rank),",
+						"     mapColumn(",
+						"          player_id = rank.id,",
+						"          player_rank = rank.rank,",
+						"          player_name = rank.name,",
+						"          player_country = rank.country,",
+						"          player_rating = rank.rating,",
+						"          player_points = rank.points,",
+						"          ranking_lastUpdatedOn = rank.lastUpdatedOn,",
+						"          player_countryId = rank.countryId,",
+						"          player_odi_avg = rank.avg,",
+						"          app_seoTitle = appIndex.seoTitle",
+						"     ),",
+						"     skipDuplicateMapInputs: false,",
+						"     skipDuplicateMapOutputs: false) ~> flatten1",
+						"flatten1 cast(output(",
+						"          player_id as integer,",
+						"          player_rank as integer '000',",
+						"          player_rating as integer,",
+						"          player_points as integer,",
+						"          ranking_lastUpdatedOn as date 'yyyy-MM-dd',",
+						"          player_countryId as integer,",
+						"          player_odi_avg as float",
+						"     ),",
+						"     errors: true) ~> cast1",
+						"TestBatsmanRankingSource foldDown(unroll(rank),",
+						"     mapColumn(",
+						"          player_id = rank.id,",
+						"          player_rank = rank.rank,",
+						"          player_name = rank.name,",
+						"          player_country = rank.country,",
+						"          player_rating = rank.rating,",
+						"          player_points = rank.points,",
+						"          ranking_lastUpdatedOn = rank.lastUpdatedOn,",
+						"          player_countryId = rank.countryId,",
+						"          player_test_avg = rank.avg,",
+						"          app_seo_title = appIndex.seoTitle",
+						"     ),",
+						"     skipDuplicateMapInputs: false,",
+						"     skipDuplicateMapOutputs: false) ~> flatten2",
+						"flatten2 cast(output(",
+						"          player_id as integer,",
+						"          player_rank as integer '000',",
+						"          player_rating as integer,",
+						"          player_points as integer,",
+						"          ranking_lastUpdatedOn as date 'yyyy-MM-dd',",
+						"          player_countryId as integer,",
+						"          player_test_avg as float",
+						"     ),",
+						"     errors: true) ~> cast2",
+						"T20BatsmanRankingsSource foldDown(unroll(rank),",
+						"     mapColumn(",
+						"          player_id = rank.id,",
+						"          player_rank = rank.rank,",
+						"          player_name = rank.name,",
+						"          player_country = rank.country,",
+						"          player_rating = rank.rating,",
+						"          player_points = rank.points,",
+						"          ranking_lastUpdatedOn = rank.lastUpdatedOn,",
+						"          player_countryId = rank.countryId,",
+						"          player_t20_avg = rank.avg,",
+						"          app_seo_title = appIndex.seoTitle",
+						"     ),",
+						"     skipDuplicateMapInputs: false,",
+						"     skipDuplicateMapOutputs: false) ~> flatten3",
+						"flatten3 cast(output(",
+						"          player_id as integer,",
+						"          player_rank as integer '000',",
+						"          player_rating as integer,",
+						"          player_points as integer,",
+						"          ranking_lastUpdatedOn as date 'yyyy-MM-dd',",
+						"          player_countryId as integer,",
+						"          player_t20_avg as float",
+						"     ),",
+						"     errors: true) ~> cast3",
+						"ODIBowlersRankingsSource foldDown(unroll(rank),",
+						"     mapColumn(",
+						"          player_id = rank.id,",
+						"          player_rank = rank.rank,",
+						"          player_name = rank.name,",
+						"          player_country = rank.country,",
+						"          player_rating = rank.rating,",
+						"          player_points = rank.points,",
+						"          ranking_lastUpdatedOn = rank.lastUpdatedOn,",
+						"          player_countryId = rank.countryId,",
+						"          player_avg = rank.avg,",
+						"          app_seo_title = appIndex.seoTitle",
+						"     ),",
+						"     skipDuplicateMapInputs: false,",
+						"     skipDuplicateMapOutputs: false) ~> flatten4",
+						"flatten4 cast(output(",
+						"          player_id as integer,",
+						"          player_rank as integer '000',",
+						"          player_rating as integer,",
+						"          player_points as integer,",
+						"          ranking_lastUpdatedOn as date 'yyyy-MM-dd',",
+						"          player_countryId as integer,",
+						"          player_avg as float",
+						"     ),",
+						"     errors: true) ~> cast4",
+						"TestBowlersRankingsSource foldDown(unroll(rank),",
+						"     mapColumn(",
+						"          player_id = rank.id,",
+						"          player_rank = rank.rank,",
+						"          player_name = rank.name,",
+						"          player_country = rank.country,",
+						"          player_rating = rank.rating,",
+						"          player_points = rank.points,",
+						"          ranking_lastUpdatedOn = rank.lastUpdatedOn,",
+						"          player_countryId = rank.countryId,",
+						"          player_avg = rank.avg,",
+						"          app_seo_title = appIndex.seoTitle",
+						"     ),",
+						"     skipDuplicateMapInputs: false,",
+						"     skipDuplicateMapOutputs: false) ~> flatten5",
+						"flatten5 cast(output(",
+						"          player_id as integer,",
+						"          player_rank as integer '000',",
+						"          player_rating as integer,",
+						"          player_points as integer,",
+						"          ranking_lastUpdatedOn as date 'yyyy-MM-dd',",
+						"          player_countryId as integer,",
+						"          player_avg as float",
+						"     ),",
+						"     errors: true) ~> cast5",
+						"T20BowlersRankingsSource foldDown(unroll(rank),",
+						"     mapColumn(",
+						"          player_id = rank.id,",
+						"          player_rank = rank.rank,",
+						"          player_name = rank.name,",
+						"          player_country = rank.country,",
+						"          player_rating = rank.rating,",
+						"          player_points = rank.points,",
+						"          ranking_lastUpdatedOn = rank.lastUpdatedOn,",
+						"          player_countryId = rank.countryId,",
+						"          player_avg = rank.avg,",
+						"          app_seo_title = appIndex.seoTitle",
+						"     ),",
+						"     skipDuplicateMapInputs: false,",
+						"     skipDuplicateMapOutputs: false) ~> flatten6",
+						"flatten6 cast(output(",
+						"          player_id as integer,",
+						"          player_rank as integer '000',",
+						"          player_rating as integer,",
+						"          player_points as integer,",
+						"          ranking_lastUpdatedOn as date 'yyyy-MM-dd',",
+						"          player_countryId as integer,",
+						"          player_avg as float",
+						"     ),",
+						"     errors: true) ~> cast6",
+						"ODIAllroundersRankingsSource foldDown(unroll(rank),",
+						"     mapColumn(",
+						"          player_id = rank.id,",
+						"          player_rank = rank.rank,",
+						"          player_name = rank.name,",
+						"          player_country = rank.country,",
+						"          player_rating = rank.rating,",
+						"          player_points = rank.points,",
+						"          ranking_lastUpdatedOn = rank.lastUpdatedOn,",
+						"          player_countryId = rank.countryId,",
+						"          app_seo_title = appIndex.seoTitle",
+						"     ),",
+						"     skipDuplicateMapInputs: false,",
+						"     skipDuplicateMapOutputs: false) ~> flatten7",
+						"flatten7 cast(output(",
+						"          player_id as integer,",
+						"          player_rank as integer '000',",
+						"          player_rating as integer,",
+						"          player_points as integer,",
+						"          ranking_lastUpdatedOn as date 'yyyy-MM-dd',",
+						"          player_countryId as integer",
+						"     ),",
+						"     errors: true) ~> cast7",
+						"TestAllroundersRankingsSource foldDown(unroll(rank),",
+						"     mapColumn(",
+						"          player_id = rank.id,",
+						"          player_rank = rank.rank,",
+						"          player_name = rank.name,",
+						"          player_country = rank.country,",
+						"          player_rating = rank.rating,",
+						"          player_points = rank.points,",
+						"          ranking_lastUpdatedOn = rank.lastUpdatedOn,",
+						"          player_countryId = rank.countryId,",
+						"          app_seo_title = appIndex.seoTitle",
+						"     ),",
+						"     skipDuplicateMapInputs: false,",
+						"     skipDuplicateMapOutputs: false) ~> flatten8",
+						"flatten8 cast(output(",
+						"          player_id as integer,",
+						"          player_rank as integer '000',",
+						"          player_rating as integer,",
+						"          player_points as integer,",
+						"          ranking_lastUpdatedOn as date 'yyyy-MM-dd',",
+						"          player_countryId as integer",
+						"     ),",
+						"     errors: true) ~> cast8",
+						"T20AllroundersRankingsSource foldDown(unroll(rank),",
+						"     mapColumn(",
+						"          player_id = rank.id,",
+						"          player_rank = rank.rank,",
+						"          player_name = rank.name,",
+						"          player_country = rank.country,",
+						"          player_rating = rank.rating,",
+						"          player_points = rank.points,",
+						"          ranking_lastUpdatedOn = rank.lastUpdatedOn,",
+						"          player_countryId = rank.countryId,",
+						"          all_seo_title = appIndex.seoTitle",
+						"     ),",
+						"     skipDuplicateMapInputs: false,",
+						"     skipDuplicateMapOutputs: false) ~> flatten9",
+						"flatten9 cast(output(",
+						"          player_id as integer,",
+						"          player_rank as integer '000',",
+						"          player_rating as integer,",
+						"          player_points as integer,",
+						"          ranking_lastUpdatedOn as date 'yyyy-MM-dd',",
+						"          player_countryId as integer",
+						"     ),",
+						"     errors: true) ~> cast9",
+						"ODITeamsRankingsSource foldDown(unroll(rank),",
+						"     mapColumn(",
+						"          team_id = rank.id,",
+						"          team_rank = rank.rank,",
+						"          team_name = rank.name,",
+						"          team_rating = rank.rating,",
+						"          team_matches = rank.matches,",
+						"          team_points = rank.points,",
+						"          ranking_lastUpdatedOn = rank.lastUpdatedOn,",
+						"          app_seo_title = appIndex.seoTitle",
+						"     ),",
+						"     skipDuplicateMapInputs: false,",
+						"     skipDuplicateMapOutputs: false) ~> flatten10",
+						"flatten10 cast(output(",
+						"          team_id as integer,",
+						"          team_rank as integer '000',",
+						"          team_rating as integer,",
+						"          team_matches as integer,",
+						"          team_points as integer,",
+						"          ranking_lastUpdatedOn as date 'yyyy-MM-dd'",
+						"     ),",
+						"     errors: true) ~> cast10",
+						"TestTeamsRankingsSource foldDown(unroll(rank),",
+						"     mapColumn(",
+						"          team_id = rank.id,",
+						"          team_rank = rank.rank,",
+						"          team_name = rank.name,",
+						"          team_rating = rank.rating,",
+						"          team_matches = rank.matches,",
+						"          team_points = rank.points,",
+						"          ranking_lastUpdatedOn = rank.lastUpdatedOn,",
+						"          app_seo_title = appIndex.seoTitle",
+						"     ),",
+						"     skipDuplicateMapInputs: false,",
+						"     skipDuplicateMapOutputs: false) ~> flatten11",
+						"T20TeamsRankingsSource foldDown(unroll(rank),",
+						"     mapColumn(",
+						"          team_id = rank.id,",
+						"          team_rank = rank.rank,",
+						"          team_name = rank.name,",
+						"          team_rating = rank.rating,",
+						"          team_matches = rank.matches,",
+						"          team_points = rank.points,",
+						"          ranking_lastUpdatedOn = rank.lastUpdatedOn,",
+						"          app_seo_title = appIndex.seoTitle",
+						"     ),",
+						"     skipDuplicateMapInputs: false,",
+						"     skipDuplicateMapOutputs: false) ~> flatten12",
+						"flatten11 cast(output(",
+						"          team_id as integer,",
+						"          team_rank as integer '000',",
+						"          team_rating as integer,",
+						"          team_matches as integer,",
+						"          team_points as integer,",
+						"          ranking_lastUpdatedOn as date 'yyyy-MM-dd'",
+						"     ),",
+						"     errors: true) ~> cast11",
+						"flatten12 cast(output(",
+						"          team_id as integer,",
+						"          team_rank as integer '000',",
+						"          team_rating as integer,",
+						"          team_matches as integer,",
+						"          team_points as integer,",
+						"          ranking_lastUpdatedOn as date 'yyyy-MM-dd'",
+						"     ),",
+						"     errors: true) ~> cast12",
+						"cast1 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     partitionFileNames:['odi_batsman_rankings.csv'],",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     partitionBy('hash', 1)) ~> sink1",
+						"cast2 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     partitionFileNames:['test_batsman_rankings.csv'],",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     partitionBy('hash', 1)) ~> sink2",
+						"cast3 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     partitionFileNames:['t20_batsman_rankings.csv'],",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     partitionBy('hash', 1)) ~> sink3",
+						"cast4 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     partitionFileNames:['odi_bowlers_rankings.csv'],",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     partitionBy('hash', 1)) ~> sink4",
+						"cast5 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     partitionFileNames:['test_bowlers_rankings.csv'],",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     partitionBy('hash', 1)) ~> sink5",
+						"cast6 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     partitionFileNames:['t20_bowlers_rankings.csv'],",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     partitionBy('hash', 1)) ~> sink6",
+						"cast7 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     partitionFileNames:['odi_allrounders_rankings.csv'],",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     partitionBy('hash', 1)) ~> sink7",
+						"cast8 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     partitionFileNames:['test_allrounders_rankings.csv'],",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     partitionBy('hash', 1)) ~> sink8",
+						"cast9 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     partitionFileNames:['t20_allrounders_rankings.csv'],",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     partitionBy('hash', 1)) ~> sink9",
+						"cast10 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     partitionFileNames:['odi_teams_rankings.csv'],",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     partitionBy('hash', 1)) ~> sink10",
+						"cast11 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     partitionFileNames:['test_teams_rankings.csv'],",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     partitionBy('hash', 1)) ~> sink11",
+						"cast12 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     partitionFileNames:['t20_teams_rankings.csv'],",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     partitionBy('hash', 1)) ~> sink12"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/ODIRankingsSink')]",
+				"[concat(variables('factoryId'), '/datasets/TestBatsmanRankingSink')]",
+				"[concat(variables('factoryId'), '/datasets/T20BatsmanRankingsSink')]",
+				"[concat(variables('factoryId'), '/datasets/ODIBowlersRankingsSink')]",
+				"[concat(variables('factoryId'), '/datasets/TestBowlersRankingsSink')]",
+				"[concat(variables('factoryId'), '/datasets/T20BowlerRankingsSink')]",
+				"[concat(variables('factoryId'), '/datasets/ODIAllroundersRankingsSink')]",
+				"[concat(variables('factoryId'), '/datasets/TestAllroundersRankingsSink')]",
+				"[concat(variables('factoryId'), '/datasets/T20AllroundersRankingsSink')]",
+				"[concat(variables('factoryId'), '/datasets/ODITeamsRankingsSink')]",
+				"[concat(variables('factoryId'), '/datasets/TestTeamsRankingsSink')]",
+				"[concat(variables('factoryId'), '/datasets/T20TeamsRankingsSink')]",
+				"[concat(variables('factoryId'), '/datasets/Transformed_Data')]"
+			]
+		}
+	]
+}

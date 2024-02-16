@@ -1,0 +1,84 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"value": "cricbuzz-cricket-df"
+		},
+		"AzureDataLakeStorage1_accountKey": {
+			"value": ""
+		},
+		"AzureDataLakeStorage2_accountKey": {
+			"value": ""
+		},
+		"ODIBatsmanRankingsCSV_accountKey": {
+			"value": ""
+		},
+		"ODIBatsmanRankingsTOCSV_accountKey": {
+			"value": ""
+		},
+		"AzureDataLakeStorage1_properties_typeProperties_url": {
+			"value": "https://cricbuzzcricketdata.dfs.core.windows.net/"
+		},
+		"AzureDataLakeStorage2_properties_typeProperties_url": {
+			"value": "https://cricbuzzcricketdata.dfs.core.windows.net/"
+		},
+		"BatsmanStatsHTTP_properties_typeProperties_url": {
+			"value": "https://cricbuzz-cricket.p.rapidapi.com/"
+		},
+		"BatsmanStatsRestHTTP_properties_typeProperties_url": {
+			"value": "https://cricbuzz-cricket.p.rapidapi.com/"
+		},
+		"HttpServer1_properties_typeProperties_url": {
+			"value": "https://cricbuzz-cricket.p.rapidapi.com/"
+		},
+		"LiveScoreHTTP_properties_typeProperties_url": {
+			"value": "https://cricbuzz-cricket.p.rapidapi.com/"
+		},
+		"ODIAllrounderRankingsHTTP_properties_typeProperties_url": {
+			"value": "https://cricbuzz-cricket.p.rapidapi.com/"
+		},
+		"ODIBatsmanRankingsCSV_properties_typeProperties_url": {
+			"value": "https://cricbuzzcricketdata.dfs.core.windows.net/"
+		},
+		"ODIBatsmanRankingsTOCSV_properties_typeProperties_url": {
+			"value": "https://cricbuzzcricketdata.dfs.core.windows.net/"
+		},
+		"ODIBowlingRankingHTTP_properties_typeProperties_url": {
+			"value": "https://cricbuzz-cricket.p.rapidapi.com/"
+		},
+		"ODIRankingsHTTP_properties_typeProperties_url": {
+			"value": "https://cricbuzz-cricket.p.rapidapi.com"
+		},
+		"ODITeamsRankings_properties_typeProperties_url": {
+			"value": "https://cricbuzz-cricket.p.rapidapi.com/"
+		},
+		"RecentMatchesHTTP_properties_typeProperties_url": {
+			"value": "https://cricbuzz-cricket.p.rapidapi.com/"
+		},
+		"T20AllroundersRankingsHTTP_properties_typeProperties_url": {
+			"value": "https://cricbuzz-cricket.p.rapidapi.com/"
+		},
+		"T20BowlingRankingsHTTP_properties_typeProperties_url": {
+			"value": "https://cricbuzz-cricket.p.rapidapi.com/"
+		},
+		"T20TeamsRankingsHTTP_properties_typeProperties_url": {
+			"value": "https://cricbuzz-cricket.p.rapidapi.com/"
+		},
+		"TestAllroundersRankings HTTP_properties_typeProperties_url": {
+			"value": "https://cricbuzz-cricket.p.rapidapi.com/"
+		},
+		"TestTeamsRankingsHTTP_properties_typeProperties_url": {
+			"value": "https://cricbuzz-cricket.p.rapidapi.com/"
+		},
+		"UpcomingMatchesHTTP_properties_typeProperties_url": {
+			"value": "https://cricbuzz-cricket.p.rapidapi.com/"
+		},
+		"containerUri": {
+			"value": ""
+		},
+		"containerSasToken": {
+			"value": ""
+		}
+	}
+}
