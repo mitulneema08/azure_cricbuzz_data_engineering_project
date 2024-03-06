@@ -2103,6 +2103,7 @@
 			"type": "Microsoft.DataFactory/factories/dataflows",
 			"apiVersion": "2018-06-01",
 			"properties": {
+				"description": "Last Updated 03/06/2024",
 				"type": "MappingDataFlow",
 				"typeProperties": {
 					"sources": [
